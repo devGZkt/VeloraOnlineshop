@@ -5,16 +5,23 @@ namespace Backend.Models.Entities
 {
     public class Product
     {
-        [Key]
-        [Required]
         public int ProductId { get; set; }
         
-        //FKs
-        [ForeignKey(nameof(CategoryId))]
-        public required Category CategoryId { get; set; }
+        public Category? CategoryId { get; set; }
 
         //Fields
-        [Required]
         public required string Name { get; set; }
+
+        public string? Sku { get; set; }
+
+        public string? Slug { get; set; }
+
+        public string? ShortDescription { get; set; }
+
+        public string? LongDescription { get; set; }
+
+        public decimal Price { get; set; }
+
+        public bool IsVisible { get; set; }
     }
 }
