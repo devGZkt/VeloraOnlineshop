@@ -4,15 +4,16 @@ namespace Backend.Models.Entities
 {
     public class OrderDetail
     {
-        [Key]
-        [Required]
+        //PK
         public int OrderDetailId { get; set; }
 
+        //FKs
+        public required Order OrderId { get; set; }
+        public required Product ProductId { get; set; }
+
         //Fields
-        [Required]
         public required int Quantity { get; set; }
 
-        [Required]
         public required decimal UnitPrice { get; set; }
     }
 }

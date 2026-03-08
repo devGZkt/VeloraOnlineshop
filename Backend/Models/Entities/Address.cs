@@ -6,7 +6,8 @@ namespace Backend.Models.Entities
 
     public class Address
     {
-        public required int AdressId { get; set; }
+        //PK
+        public required int AddressId { get; set; }
         
         //FKs
         public required User UserId { get; set; }
@@ -16,7 +17,7 @@ namespace Backend.Models.Entities
         
         public required string Street { get; set; }
 
-        public required string HourNr { get; set; }
+        public required string HouseNr { get; set; }
 
         public required string City { get; set; }
 

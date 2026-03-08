@@ -5,8 +5,10 @@ namespace Backend.Models.Entities
 {
     public class Product
     {
+        //PK
         public int ProductId { get; set; }
         
+        //FKs
         public Category? CategoryId { get; set; }
 
         //Fields
