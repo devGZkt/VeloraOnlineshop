@@ -11,11 +11,13 @@ namespace Backend.Models.Entities
         public int OrderId { get; set; }
 
         //FKs
-        public required User UserId { get; set; }
-        public required Address AddressId { get; set; }
+        public required int UserId { get; set; }
+        public required virtual User User {  get; set; }
+        public required int AddressId { get; set; }
+        public required virtual Address Adress { get; set; }
 
         //Fields
-        public string? Type { get; set; } //BillingAdress, PrivateAdress, BuisnessAdress...
+        public string? Type { get; set; }
 
         public required string Street { get; set; }
 

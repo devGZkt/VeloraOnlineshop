@@ -10,7 +10,8 @@ namespace Backend.Models.Entities
         public required int AddressId { get; set; }
         
         //FKs
-        public required User UserId { get; set; }
+        public required int UserId { get; set; }
+        public required virtual User User {  get; set; }
 
         //Fields
         public required string Type { get; set; }

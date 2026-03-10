@@ -9,7 +9,8 @@ namespace Backend.Models.Entities
         public int ProductId { get; set; }
         
         //FKs
-        public Category? CategoryId { get; set; }
+        public int CategoryId { get; set; }
+        public required virtual Category Category { get; set; }
 
         //Fields
         public required string Name { get; set; }

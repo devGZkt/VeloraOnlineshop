@@ -8,12 +8,13 @@ namespace Backend.Models.Entities
         public int OrderDetailId { get; set; }
 
         //FKs
-        public required Order OrderId { get; set; }
-        public required Product ProductId { get; set; }
+        public required int OrderId { get; set; }
+        public required virtual Order Order { get; set; }
+        public required int ProductId { get; set; }
+        public required virtual Product Product { get; set; }
 
         //Fields
         public required int Quantity { get; set; }
-
         public required decimal UnitPrice { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Backend.Services
 	{
 		public VeloraDbContext(DbContextOptions<VeloraDbContext> options) : base(options)
 		{
-			
+			SQLitePCL.Batteries.Init();
 		}
 
 		public DbSet<Address> Adresses { get; set; }
