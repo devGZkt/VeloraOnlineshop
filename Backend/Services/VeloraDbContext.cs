@@ -119,7 +119,10 @@ namespace Backend.Services
 				entity.Property(e => e.Email).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.PwHashed).HasMaxLength(255).IsRequired();
 				entity.Property(e => e.CreatedAt).IsRequired();
-			});
+
+                entity.HasIndex(e => e.Name).IsUnique();
+				entity.HasIndex(e => e.Email).IsUnique();
+            });
 		}	
 	}
 }
