@@ -5,11 +5,12 @@ namespace Backend.Models.Entities
     public class User
     {
         //PK
-        public required int UserId { get; set; }
-
+        public int UserId { get; set; }
 
         //Fields
-        public required string Name { get; set; }
+        public required string FirstName { get; set; }
+
+        public required string LastName { get; set; }
 
         public required string Email { get; set; }
 

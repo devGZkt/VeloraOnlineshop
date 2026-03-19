@@ -12,6 +12,7 @@ namespace Backend.Services
 			SQLitePCL.Batteries.Init();
 		}
 
+		//All Entities in Models as Properties
 		public DbSet<Address> Adresses { get; set; }
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<Order> Orders { get; set; }
@@ -19,6 +20,8 @@ namespace Backend.Services
 		public DbSet<Product> Products { get; set; }
 		public DbSet<User> Users { get; set; }
 
+
+		//FluentAPI integration for maxLenght, not null/rs required and relations between Table
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
@@ -115,14 +118,16 @@ namespace Backend.Services
 			{
 				entity.HasKey(e => e.UserId);
 
-				entity.Property(e => e.Name).HasMaxLength(50).IsRequired();
+				entity.Property(e => e.FirstName).HasMaxLength(50).IsRequired();
+				entity.Property(e => e.LastName).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.Email).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.PwHashed).HasMaxLength(255).IsRequired();
 				entity.Property(e => e.CreatedAt).IsRequired();
 
-                entity.HasIndex(e => e.Name).IsUnique();
+				entity.HasIndex(e => e.FirstName).IsUnique();
+				entity.HasIndex(e => e.LastName).IsUnique();
 				entity.HasIndex(e => e.Email).IsUnique();
-            });
+			});
 		}	
 	}
 }

@@ -6,7 +6,8 @@ namespace Backend.Models.Entities
 
     public class Category
     {
-        public required int CategoryId { get; set; } //PK
+        //PK
+        public required int CategoryId { get; set; }
 
 
         //Fields

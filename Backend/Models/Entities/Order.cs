@@ -18,15 +18,10 @@ namespace Backend.Models.Entities
 
         //Fields
         public string? Type { get; set; }
-
-        public required string Street { get; set; }
-
+        public required string Street { get; set; } 
         public required string HouseNr { get; set; }
-
         public required string Location { get; set; }
-
         public required string ZipCode { get; set; }
-
         public DateTime AddressCreatedAt { get; set; }
     }
 }
