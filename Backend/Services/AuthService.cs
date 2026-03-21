@@ -23,7 +23,7 @@ namespace Backend.Services
         //Checks if user exists and if pw ist correct
         public async Task<string?> AuthenticateAsync(string userEmail, string pw)
         {
-            //Searches db for email user gave us
+            //Searches db for email user gave
             var user = await _db.Users.SingleOrDefaultAsync(x => x.Email == userEmail);
 
             //Checks if user is found in the db and checks if the pw is valid
