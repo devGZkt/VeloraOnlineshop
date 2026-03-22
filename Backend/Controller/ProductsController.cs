@@ -8,17 +8,26 @@ namespace Backend.Controller
     public class ProductsController : ControllerBase
     {
         private readonly VeloraDbContext _db;
-
+                                                                        
         public ProductsController(VeloraDbContext db)
         {
             _db = db;
         }
 
+
+        //Function to Search Product throught ID
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProduct(string id)
+        public async Task<IActionResult?> GetProductByIdAsync(int id)
         {
-            
+            var foundProduct = _db.Products.FirstOrDefault(p => p.ProductId == id);
+
+            //return null if id not found
+            if (foundProduct == null)
+            {
+                return NotFound("id does not exist");
+            }
+
+            return Ok(foundProduct);
         }
     }
-
 }
