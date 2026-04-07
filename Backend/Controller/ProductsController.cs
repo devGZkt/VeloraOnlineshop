@@ -1,4 +1,6 @@
-﻿using Backend.Services;
+﻿using Backend.Models.Entities;
+using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +23,7 @@ namespace Backend.Controller
         public async Task<IActionResult?> GetProductByIdAsync(int id)
         {
             //Searches db for products with given productId
-            var foundProduct = _db.Products.FirstOrDefault(p => p.ProductId == id);
+            var foundProduct = await _db.Products.FindAsync(id);
 
             //return null if id not found
             if (foundProduct == null)
@@ -33,15 +35,12 @@ namespace Backend.Controller
             return Ok(foundProduct);
         }
 
-
-
         //returns list of all products in db, with optional query parameters for categoryId, minPrice and maxPrice
         [HttpGet]
         public async Task<IActionResult> GetProducts([FromQuery] int? categordyId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
         {
             //IQueryable to build query on
             var query = _db.Products.AsQueryable();
-
 
             //Searches db for products with given categoryId, minPrice and maxPrice
             if (categordyId.HasValue)
@@ -59,11 +58,26 @@ namespace Backend.Controller
                 query = query.Where(p => p.Price <= maxPrice);
             }
             
-
+            //Searches for products and returns list of products that match the query parameters
             var products = await query.ToListAsync();
             return Ok(products);
         }
-        
+
+
+        //Route to create a new product
+        [HttpPost("create-product")]
+        // [Authorize]
+        public async Task<IActionResult> CreateProduct([FromBody] Product product)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            _db.Products.Add(product);
+            await _db.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetProductByIdAsync), new { id = product.ProductId }, product);
+        }
     }
 }
 
