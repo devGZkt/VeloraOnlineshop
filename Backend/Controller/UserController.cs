@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Controller
 {
+    /// <summary>
+    /// Controller-Class to create user and login user
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase

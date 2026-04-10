@@ -16,7 +16,7 @@ namespace Backend.Controller
             _db = db;
         }
 
-        //Function to Search Product throught ID
+        //Function to Search Product throught ID    
         [HttpGet("{id}")]
         public async Task<IActionResult?> GetProductByIdAsync(int id)
         {
