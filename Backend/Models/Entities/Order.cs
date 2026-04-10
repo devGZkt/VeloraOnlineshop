@@ -1,4 +1,3 @@
-
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Models.Entities;
@@ -18,10 +17,11 @@ namespace Backend.Models.Entities
 
         //Fields
         public string? Type { get; set; }
+        public DateTime OrderDate { get; set; }
         public required string Street { get; set; } 
         public required string HouseNr { get; set; }
-        public required string Location { get; set; }
+        public required string City { get; set; }
         public required string ZipCode { get; set; }
-        public DateTime AddressCreatedAt { get; set; }
+        public virtual List<OrderDetail> OrderItems { get; set; } = [];
     }
 }
