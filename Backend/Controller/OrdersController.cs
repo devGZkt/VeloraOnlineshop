@@ -1,4 +1,5 @@
-﻿using Backend.Services;
+﻿using Backend.Models.Entities;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controller
@@ -12,6 +13,13 @@ namespace Backend.Controller
         public OrdersController(VeloraDbContext db)
         {
             _db = db;
+        }
+
+
+        [HttpPost("create-order")]
+        public async Task<IActionResult> SetOrderAsync([FromBody] Product product)
+        {
+
         }
     }
 }
