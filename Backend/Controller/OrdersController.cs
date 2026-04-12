@@ -67,10 +67,10 @@ namespace Backend.Controller
                 ZipCode = createOrderRequest.ZipCode
             };
 
-            _db.Addresses.Add(address);
+            _db.Adresses.Add(address);
             await _db.SaveChangesAsync();
 
-            // creates new order entity with orderDetail
+            // creates new order entity
             var order = new Order
             {
                 UserId = createOrderRequest.CustomerId,
@@ -78,13 +78,30 @@ namespace Backend.Controller
                 AddressId = address.AddressId,
                 Adress = address,
                 OrderDate = DateTime.UtcNow,
-                OrderItems = createOrderRequest.Items.Select(item => new OrderDetail
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    UnitPrice = orderItems.FirstOrDefault(p => p.ProductId == item.ProductId)?.Price ?? 0
-                }).ToList()
+                Street = createOrderRequest.Street,
+                HouseNr = createOrderRequest.HouseNr,
+                City = createOrderRequest.City,
+                ZipCode = createOrderRequest.ZipCode
             };
+
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync();
+
+            // creates order details with the now-available OrderId
+            var orderDetails = createOrderRequest.Items.Select(item => new OrderDetail
+            {
+                OrderId = order.OrderId,
+                Order = order,
+                ProductId = item.ProductId,
+                Product = orderItems.FirstOrDefault(p => p.ProductId == item.ProductId),
+                Quantity = item.Quantity,
+                UnitPrice = orderItems.FirstOrDefault(p => p.ProductId == item.ProductId)?.Price ?? 0
+            }).ToList();
+
+            _db.OrderDetails.AddRange(orderDetails);
+            await _db.SaveChangesAsync();
+
+            return new OkObjectResult("Order created successfully.");
         }
     }
 }
