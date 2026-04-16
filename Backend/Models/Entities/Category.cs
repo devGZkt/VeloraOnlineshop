@@ -17,6 +17,7 @@ namespace Backend.Models.Entities
 
         public string? Description { get; set; }
 
+        [SQLite.Unique]
         public required int DisplayOrder  { get; set; }
     }
 }

@@ -63,7 +63,7 @@ namespace Backend.Services
 				entity.Property(e => e.Type).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.Street).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.HouseNr).HasMaxLength(10).IsRequired();
-				entity.Property(e => e.Location).HasMaxLength(50).IsRequired();
+				entity.Property(e => e.City).HasMaxLength(50).IsRequired();
 				entity.Property(e => e.ZipCode).HasMaxLength(12).IsRequired();
 
 				entity.HasOne<User>()

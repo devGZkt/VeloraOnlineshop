@@ -1,13 +1,16 @@
 ﻿using Backend.Models.DTOs;
 using Backend.Models.Entities;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Backend.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController
+    public class OrdersController : ControllerBase
     {
         private readonly VeloraDbContext _db;
 
@@ -17,91 +20,109 @@ namespace Backend.Controller
         }
 
         /// <summary>
-        /// Endpoint to create new order.  
+        /// Endpoint to create a new order.
         /// </summary>
         [HttpPost("create-order")]
         public async Task<IActionResult> SetOrderAsync([FromBody] CreateOrderRequest createOrderRequest)
         {
-            // validates request bodzy and returns 400 if invalid
-            if(createOrderRequest == null || createOrderRequest.Items == null || createOrderRequest.Items.Count == 0)
+            // Validates request body and returns 400 if invalid
+            if (createOrderRequest == null || createOrderRequest.Items == null || createOrderRequest.Items.Count == 0)
             {
-                return new BadRequestObjectResult("Invalid order request.");
+                return BadRequest("Invalid order request.");
             }
 
-            // creates list for products
-            List<Product> orderItems = [];
-
-            // loop to find items in db and add them to orderItems list if item was found. 
-            createOrderRequest.Items.ForEach(item =>
-            {
-                var product = _db.Products.FirstOrDefault(p => p.ProductId == item.ProductId);
-                if (product != null)
-                {
-                    orderItems.Add(product);
-                }
-            });
-
-            // if no valid products were found in the order, return 400 
-            if(orderItems.Count == 0)
-            {
-                return new BadRequestObjectResult("No valid products found in the order.");
-            }
-
-            // searches for user in db
-            var user = _db.Users.FirstOrDefault(u => u.UserId == createOrderRequest.CustomerId);
+            // Searches for user in db
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == createOrderRequest.CustomerId);
             if (user == null)
             {
-                return new BadRequestObjectResult("User not found.");
+                return BadRequest("User not found.");
             }
 
-            // creates new address entity from order request
-            var address = new Address
+            // Get all product IDs from the request to fetch them in one single database call (Performance optimization)
+            var productIds = createOrderRequest.Items.Select(i => i.ProductId).ToList();
+            var availableProducts = await _db.Products
+                .Where(p => productIds.Contains(p.ProductId))
+                .ToListAsync();
+
+            // If no valid products were found in the database, return 400
+            if (availableProducts.Count == 0)
             {
-                UserId = createOrderRequest.CustomerId,
-                User = user,
-                Type = createOrderRequest.AddressType ?? "Shipping",
-                AddressCreatedAt = DateTime.UtcNow,
-                Street = createOrderRequest.Street,
-                HouseNr = createOrderRequest.HouseNr,
-                City = createOrderRequest.City,
-                ZipCode = createOrderRequest.ZipCode
-            };
+                return BadRequest("No valid products found in the order.");
+            }
 
-            _db.Adresses.Add(address);
-            await _db.SaveChangesAsync();
+            // Start a transaction to ensure data integrity
+            using var transaction = await _db.Database.BeginTransactionAsync();
 
-            // creates new order entity
-            var order = new Order
+            try
             {
-                UserId = createOrderRequest.CustomerId,
-                User = user,
-                AddressId = address.AddressId,
-                Adress = address,
-                OrderDate = DateTime.UtcNow,
-                Street = createOrderRequest.Street,
-                HouseNr = createOrderRequest.HouseNr,
-                City = createOrderRequest.City,
-                ZipCode = createOrderRequest.ZipCode
-            };
+                // Creates new address entity from order request
+                var address = new Address
+                {
+                    AddressId = 0,
+                    UserId = createOrderRequest.CustomerId,
+                    User = user,
+                    Type = createOrderRequest.AddressType ?? "Shipping",
+                    AddressCreatedAt = DateTime.UtcNow,
+                    Street = createOrderRequest.Street,
+                    HouseNr = createOrderRequest.HouseNr,
+                    City = createOrderRequest.City,
+                    ZipCode = createOrderRequest.ZipCode
+                };
 
-            _db.Orders.Add(order);
-            await _db.SaveChangesAsync();
+                _db.Adresses.Add(address);
+                await _db.SaveChangesAsync();
 
-            // creates order details with the now-available OrderId
-            var orderDetails = createOrderRequest.Items.Select(item => new OrderDetail
+                // Creates new order entity
+                var order = new Order
+                {
+                    UserId = createOrderRequest.CustomerId,
+                    User = user,
+                    AddressId = address.AddressId,
+                    Adress = address,
+                    OrderDate = DateTime.UtcNow,
+                    Street = createOrderRequest.Street,
+                    HouseNr = createOrderRequest.HouseNr,
+                    City = createOrderRequest.City,
+                    ZipCode = createOrderRequest.ZipCode
+                };
+
+                _db.Orders.Add(order);
+                await _db.SaveChangesAsync();
+
+                // Creates order details using the products fetched earlier
+                var orderDetails = createOrderRequest.Items
+                    .Select(item => {
+                        var product = availableProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
+                        if (product == null) return null;
+
+                        return new OrderDetail
+                        {
+                            OrderId = order.OrderId,
+                            Order = order,
+                            ProductId = product.ProductId,
+                            Product = product,
+                            Quantity = item.Quantity,
+                            UnitPrice = product.Price
+                        };
+                    })
+                    .Where(detail => detail != null)
+                    .ToList();
+
+                _db.OrderDetails.AddRange(orderDetails);
+                await _db.SaveChangesAsync();
+
+                // Commit the transaction if everything succeeded
+                await transaction.CommitAsync();
+
+                return Ok("Order created successfully.");
+            }
+            catch (Exception ex)
             {
-                OrderId = order.OrderId,
-                Order = order,
-                ProductId = item.ProductId,
-                Product = orderItems.FirstOrDefault(p => p.ProductId == item.ProductId),
-                Quantity = item.Quantity,
-                UnitPrice = orderItems.FirstOrDefault(p => p.ProductId == item.ProductId)?.Price ?? 0
-            }).ToList();
-
-            _db.OrderDetails.AddRange(orderDetails);
-            await _db.SaveChangesAsync();
-
-            return new OkObjectResult("Order created successfully.");
+                // Rollback changes if any error occurs during the process
+                await transaction.RollbackAsync();
+                Debug.WriteLine($"Error creating order: {ex.Message}");
+                return StatusCode(500, "An error occurred while processing the order.");
+            }
         }
     }
 }

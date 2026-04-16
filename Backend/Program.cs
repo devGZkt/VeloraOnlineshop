@@ -69,7 +69,7 @@ app.MapGet("test-db", () =>
     using var scope = app.Services.CreateScope();
     VeloraDbContext db = scope.ServiceProvider.GetRequiredService<VeloraDbContext>();
     db.Database.EnsureCreated();
-    
+
 });
 
 if (app.Environment.IsDevelopment())
