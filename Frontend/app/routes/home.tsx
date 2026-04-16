@@ -1,124 +1,177 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Link } from 'react-router';
+import Nav from '../components/Nav';
 
-const Nav = () => {
-  // Simple state to toggle mobile menu
-  const [isOpen, setIsOpen] = useState(false);
+const CATEGORIES = [
+  { name: 'Parfüm & Düfte', href: '/products?category=parfuem-duefte', image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Pflege & Hygiene', href: '/products?category=pflege-hygiene', image: 'https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Gesicht & Haut', href: '/products?category=gesicht-haut', image: 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Haar & Bart', href: '/products?category=haar-bart', image: 'https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Make-Up', href: '/products?category=make-up', image: 'https://images.unsplash.com/photo-1596462502278-27bf85033e5a?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Öle & Essenzen', href: '/products?category=oele-essenzen', image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Haushalt & Reinigung', href: '/products?category=haushalt-reinigung', image: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&q=80&w=800' },
+  { name: 'Ernährung & Vitalität', href: '/products?category=ernaehrung-vitalitaet', image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=800' },
+];
 
-  // Example "active" link logic
-  const activeLink = 'Products';
-
-  const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Products', href: '/products' },
-    { name: 'About Us', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ];
-
+const Home = () => {
   return (
-    <nav className="bg-[#f2f4f3] text-[#333e38] shadow-sm font-sans sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          
-          {/* Logo Section */}
-          <div className="flex-shrink-0 flex items-center">
-            {/* Note: This uses a generic serif font to mimic the style. 
-                In a real app, you would use a specific font-family or an SVG/image. */}
-            <h1 className="text-4xl font-serif text-[#3e564c]">
-              Velora<span className="text-[#3e564c] ml-1">.</span>
-            </h1>
-          </div>
+    <div className="font-sans min-h-screen bg-[#f8f9f8]">
+      <Nav />
+      
+      {/* Hero Section */}
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image & Overlay */}
+        <div className="absolute inset-0 w-full h-full">
+          <img 
+            src="https://images.unsplash.com/photo-1615397323214-7f1545dbf416?auto=format&fit=crop&q=80&w=2000" 
+            alt="Velora Hero" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#2a3731]/80 to-[#2a3731]/40 mix-blend-multiply" />
+        </div>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex flex-grow justify-center space-x-10">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className={`text-sm tracking-widest uppercase relative pb-2 transition duration-300
-                  ${
-                    activeLink === link.name
-                      ? 'text-[#2a3731] font-medium after:absolute after:bottom-0 after:left-0 after:bg-[#68a49c] after:h-[2px] after:w-full'
-                      : 'text-[#8c9490] hover:text-[#2a3731]'
-                  }
-                `}
-              >
-                {link.name}
-              </a>
-            ))}
-          </div>
-
-          {/* Right Icons (Desktop) */}
-          <div className="hidden md:flex items-center space-x-6 text-[#2a3731]">
-            <button aria-label="User Account">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-              </svg>
-            </button>
-            <button aria-label="Shopping Cart" className="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.119-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
-              {/* Notification Badge */}
-              <span className="absolute -top-1 -right-1 block h-2.5 w-2.5 rounded-full bg-[#3e564c]" />
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="text-[#3e564c] hover:text-[#2a3731] focus:outline-none"
-              aria-label="Toggle Menu"
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+          <span className="block text-sm md:text-base text-[#d8e2df] tracking-[0.3em] uppercase mb-4 opacity-0 animate-fade-in-up">
+            Natur & Ästhetik vereint
+          </span>
+          <h1 className="text-5xl md:text-7xl font-serif text-white mb-6 leading-tight opacity-0 animate-fade-in-up" style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}>
+            Erlebe die pure Essenzen für dein Wohlbefinden.
+          </h1>
+          <p className="text-lg md:text-xl text-[#d8e2df] mb-10 max-w-2xl mx-auto opacity-0 animate-fade-in-up font-light" style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}>
+            Entdecke kuratierte Kollektionen, die deine Routine bereichern – von luxuriösen Düften bis hin zur täglichen Vitalität.
+          </p>
+          <div className="opacity-0 animate-fade-in-up" style={{ animationDelay: '0.6s', animationFillMode: 'forwards' }}>
+            <Link 
+              to="/products"
+              className="inline-block bg-[#68a49c] hover:bg-[#528a83] text-white px-10 py-4 font-medium tracking-widest uppercase transition-all duration-300 transform hover:-translate-y-1 hover:shadow-xl hover:shadow-[#68a49c]/30 rounded-sm"
             >
-              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isOpen ? (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
+              Kollektion Entdecken
+            </Link>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Mobile Menu Dropdown */}
-      <div className={`md:hidden bg-white border-t border-[#e2e8e4] transition-all duration-300 ease-in-out ${isOpen ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}>
-        <div className="px-4 pt-4 pb-6 space-y-3">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className={`block text-sm tracking-widest uppercase transition duration-300 py-2
-                ${
-                  activeLink === link.name
-                    ? 'text-[#2a3731] font-medium'
-                    : 'text-[#8c9490] hover:text-[#2a3731]'
-                }
-              `}
+      {/* Categories Grid */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-sm tracking-[0.2em] font-bold uppercase text-[#68a49c] mb-2">Unsere Welten</h2>
+          <h3 className="text-4xl font-serif text-[#2a3731]">Finde deine Produkte</h3>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {CATEGORIES.map((cat, index) => (
+            <Link 
+              key={cat.name}
+              to={cat.href}
+              className="group relative h-80 rounded-2xl overflow-hidden cursor-pointer shadow-sm hover:shadow-2xl transition-all duration-500 block"
             >
-              {link.name}
-            </a>
+              {/* Category Image */}
+              <div className="absolute inset-0">
+                <img 
+                  src={cat.image} 
+                  alt={cat.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </div>
+              
+              {/* Dark Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2a3731]/90 via-[#2a3731]/20 to-transparent transition-opacity duration-300 group-hover:via-[#2a3731]/40" />
+
+              {/* Text Content */}
+              <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                <div className="transform transition-transform duration-300 group-hover:-translate-y-2">
+                  <h4 className="text-xl font-serif text-white mb-2">{cat.name}</h4>
+                  <div className="flex items-center text-[#d8e2df] text-sm uppercase tracking-wider font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Entdecken
+                    <svg className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </Link>
           ))}
-          
-          {/* Mobile Icons */}
-          <div className="flex items-center space-x-6 pt-4 border-t border-[#e2e8e4] text-[#2a3731]">
-            <button aria-label="User Account">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-              </svg>
-            </button>
-            <button aria-label="Shopping Cart" className="relative">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.119-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-              </svg>
-              <span className="absolute -top-1 -right-1 block h-2.5 w-2.5 rounded-full bg-[#3e564c]" />
-            </button>
+        </div>
+      </section>
+
+      {/* Feature Section with Background */}
+      <section className="py-24 bg-[#eef1f0] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
+          <div className="w-full md:w-1/2 flex justify-center">
+             <div className="relative w-full max-w-md aspect-[3/4] rounded-tr-[100px] rounded-bl-[100px] overflow-hidden shadow-2xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800" 
+                  alt="Quality Products" 
+                  className="w-full h-full object-cover"
+                />
+             </div>
+          </div>
+          <div className="w-full md:w-1/2 text-left">
+            <h2 className="text-sm tracking-[0.2em] font-bold uppercase text-[#68a49c] mb-2">Die Velora Philosophie</h2>
+            <h3 className="text-4xl font-serif text-[#2a3731] mb-6">Qualität, die man spürt.</h3>
+            <p className="text-[#5b6a62] text-lg font-light leading-relaxed mb-8">
+              Wir bei Velora glauben daran, dass wahre Schönheit und Gesundheit in der Balance liegen. Jedes unserer Produkte wird sorgfältig ausgewählt, um nicht nur nachhaltig, sondern vor allem wirkungsvoll zu sein. Mach dir keine Gedanken mehr über Inhaltsstoffe – wir haben das bereits für dich getan.
+            </p>
+            <Link 
+              to="/about"
+              className="inline-flex items-center text-[#2a3731] font-semibold uppercase tracking-widest hover:text-[#68a49c] transition-colors group"
+            >
+              Mehr über uns
+              <span className="block w-12 h-[2px] bg-[#2a3731] ml-4 group-hover:w-16 group-hover:bg-[#68a49c] transition-all duration-300"></span>
+            </Link>
           </div>
         </div>
-      </div>
-    </nav>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#2a3731] text-[#A5C0B5] py-12">
+         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+               <h3 className="text-3xl font-serif text-white mb-4">Velora<span className="text-[#68a49c]">.</span></h3>
+               <p className="font-light text-sm">Deine Adresse für hochwertige Produkte aus den Bereichen Parfum, Pflege und Wohlbefinden.</p>
+            </div>
+            <div>
+               <h4 className="text-white font-semibold uppercase tracking-widest mb-4">Shop Kategorien</h4>
+               <ul className="space-y-2 text-sm font-light">
+                  <li><Link to="/products?category=parfuem-duefte" className="hover:text-white transition-colors">Parfüm & Düfte</Link></li>
+                  <li><Link to="/products?category=pflege-hygiene" className="hover:text-white transition-colors">Pflege & Hygiene</Link></li>
+                  <li><Link to="/products?category=gesicht-haut" className="hover:text-white transition-colors">Gesicht & Haut</Link></li>
+                  <li><Link to="/products?category=haushalt-reinigung" className="hover:text-white transition-colors">Haushalt & Reinigung</Link></li>
+               </ul>
+            </div>
+            <div>
+               <h4 className="text-white font-semibold uppercase tracking-widest mb-4">Rechtliches</h4>
+               <ul className="space-y-2 text-sm font-light">
+                  <li><a href="#" className="hover:text-white transition-colors">Impressum</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">Datenschutz</a></li>
+                  <li><a href="#" className="hover:text-white transition-colors">AGB</a></li>
+               </ul>
+            </div>
+         </div>
+         <div className="container mx-auto px-6 mt-12 pt-8 border-t border-[#3E564C] text-center text-sm font-light">
+            &copy; {new Date().getFullYear()} Velora. Alle Rechte vorbehalten.
+         </div>
+      </footer>
+
+      {/* CSS for custom animations */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
+        }
+      `}} />
+    </div>
   );
 };
 
-export default Nav;
+export default Home;
