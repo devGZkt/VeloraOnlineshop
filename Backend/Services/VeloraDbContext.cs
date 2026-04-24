@@ -37,10 +37,10 @@ namespace Backend.Services
 				entity.Property(e => e.ZipCode).HasMaxLength(10).IsRequired();
 				entity.Property(e => e.Type).HasMaxLength(50);
 
-				entity.HasOne<User>()
-					.WithMany()
-					.HasForeignKey(e => e.UserId);
-			});
+				entity.HasOne(a => a.User)
+					.WithOne(u => u.Adress)
+					.HasForeignKey<Address>(a => a.UserId);
+				});
 
 			// Category
 			modelBuilder.Entity<Category>(entity =>
