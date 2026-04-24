@@ -1,4 +1,5 @@
 import Nav from "../components/Nav"
+import Footer from "../components/Footer"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router"
 import axios from "axios"
@@ -38,8 +39,9 @@ const Products = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get("http://localhost:5142/api/Products");
+                const response = await axios.get("/api/Products");
                 setProducts(response.data);
+                console.log("Fetched products:", response.data);
             } catch (err) {
                 setError("Failed to load products.");
                 console.error(err);
@@ -113,6 +115,7 @@ const Products = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     )
 }

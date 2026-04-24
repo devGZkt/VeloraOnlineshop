@@ -32,7 +32,7 @@ builder.Services.AddAuthentication(options =>
         }
     };
 
-    //stores appname for token validation
+    //Stores appname for token validation
     var appName = Assembly.GetExecutingAssembly().GetName().Name;
 
     //Goes through list and checks if token valid

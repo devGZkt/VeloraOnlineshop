@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Nav from "../components/Nav";
+import Footer from "../components/Footer";
 import axios from "axios";
 
 const Contact = () => {
@@ -111,6 +112,7 @@ const Contact = () => {
         </form>
 
       </main>
+      <Footer />
     </div>
   );
 };
