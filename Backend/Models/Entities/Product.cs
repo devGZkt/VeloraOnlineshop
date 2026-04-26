@@ -26,5 +26,7 @@ namespace Backend.Models.Entities
         public decimal Price { get; set; }
 
         public bool IsVisible { get; set; }
+
+        public int DisplayOrder { get; set; } //Prio 1-3
     }
 }

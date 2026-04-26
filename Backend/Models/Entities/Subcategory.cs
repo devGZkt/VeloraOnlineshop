@@ -4,11 +4,13 @@ using System.ComponentModel.DataAnnotations;
 namespace Backend.Models.Entities
 {
 
-    public class Category
+    public class Subcategory
     {
         //PK
-        public required int CategoryId { get; set; }
+        public required int SubcategoryId { get; set; }
 
+        //FKs
+        public required int CategoryId { get; set; }
 
         //Fields
         public string? Slug { get; set; }

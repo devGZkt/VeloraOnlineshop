@@ -3,6 +3,7 @@ using System;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(VeloraDbContext))]
-    partial class VeloraDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260425080402_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.13");
@@ -42,6 +45,7 @@ namespace Backend.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
@@ -74,11 +78,17 @@ namespace Backend.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Slug")
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("CategoryId");
+
+                    b.HasIndex("DisplayOrder")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -190,9 +200,6 @@ namespace Backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("CategoryId1")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DisplayOrder")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsVisible")

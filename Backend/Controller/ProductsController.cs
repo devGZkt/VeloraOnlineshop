@@ -1,9 +1,7 @@
 ﻿using Backend.Models.Entities;
 using Backend.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace Backend.Controller
 {

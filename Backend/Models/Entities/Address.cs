@@ -1,9 +1,8 @@
-    using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Models.Entities
 {
-
     public class Address
     {
         //PK
@@ -14,7 +13,7 @@ namespace Backend.Models.Entities
         public required virtual User User {  get; set; }
 
         //Fields
-        public required string Type { get; set; }
+        public string? Type { get; set; }
         
         public required string Street { get; set; }
 

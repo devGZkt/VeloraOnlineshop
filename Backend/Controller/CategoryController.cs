@@ -1,5 +1,5 @@
 ﻿using Backend.Models.DTOs;
-using Backend.Services;
+using                Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controller
@@ -8,8 +8,8 @@ namespace Backend.Controller
     [ApiController]
     public class CategoryController
     {
-        private readonly VeloraDbContext _db;
-        public CategoryController(VeloraDbContext db)
+        private readonly VeloraDbContext? _db;
+        public CategoryController(VeloraDbContext? db)
         {
             db = _db;
         }

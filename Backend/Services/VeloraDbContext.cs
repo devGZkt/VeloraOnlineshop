@@ -1,7 +1,5 @@
 ﻿using Backend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
 
 namespace Backend.Services
 {
@@ -50,10 +48,16 @@ namespace Backend.Services
 				entity.Property(e => e.Slug).HasMaxLength(50);
 				entity.Property(e => e.Active).IsRequired();
 				entity.Property(e => e.Description).HasMaxLength(200);
-				entity.Property(e => e.DisplayOrder).IsRequired();
-
-				entity.HasIndex(e => e.DisplayOrder).IsUnique();
 			});
+
+			//Subcategory
+			modelBuilder.Entity<Subcategory>(entity =>
+			{
+				entity.HasKey(e => e.SubcategoryId);
+
+				entity.Property(e => e.Slug).HasMaxLength(50);
+				entity.Property(e => e.Active).IsRequired();
+=			});
 
 			// Order
 			modelBuilder.Entity<Order>(entity =>

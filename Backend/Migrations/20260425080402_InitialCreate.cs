@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Backend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitalCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -33,7 +33,9 @@ namespace Backend.Migrations
                 {
                     UserId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    AdressId = table.Column<int>(type: "INTEGER", nullable: true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     PwHashed = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "TEXT", nullable: false),
@@ -86,7 +88,6 @@ namespace Backend.Migrations
                     AddressId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId1 = table.Column<int>(type: "INTEGER", nullable: false),
                     Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     Street = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     HouseNr = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
@@ -103,12 +104,6 @@ namespace Backend.Migrations
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Adresses_Users_UserId1",
-                        column: x => x.UserId1,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -122,11 +117,11 @@ namespace Backend.Migrations
                     AddressId = table.Column<int>(type: "INTEGER", nullable: false),
                     AdressAddressId = table.Column<int>(type: "INTEGER", nullable: false),
                     Type = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    OrderDate = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Street = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
                     HouseNr = table.Column<string>(type: "TEXT", maxLength: 10, nullable: false),
-                    Location = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
-                    ZipCode = table.Column<string>(type: "TEXT", maxLength: 12, nullable: false),
-                    AddressCreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    City = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false),
+                    ZipCode = table.Column<string>(type: "TEXT", maxLength: 12, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -168,7 +163,7 @@ namespace Backend.Migrations
                     ProductId = table.Column<int>(type: "INTEGER", nullable: false),
                     ProductId1 = table.Column<int>(type: "INTEGER", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "TEXT", precision: 18, scale: 2, nullable: false)
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,12 +197,8 @@ namespace Backend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Adresses_UserId",
                 table: "Adresses",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Adresses_UserId1",
-                table: "Adresses",
-                column: "UserId1");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_DisplayOrder",
@@ -264,6 +255,24 @@ namespace Backend.Migrations
                 name: "IX_Products_CategoryId1",
                 table: "Products",
                 column: "CategoryId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_FirstName",
+                table: "Users",
+                column: "FirstName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_LastName",
+                table: "Users",
+                column: "LastName",
+                unique: true);
         }
 
         /// <inheritdoc />
