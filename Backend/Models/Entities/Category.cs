@@ -16,5 +16,7 @@ namespace Backend.Models.Entities
         public required bool Active { get; set; }
 
         public string? Description { get; set; }
+
+        public virtual ICollection<Subcategory> Subcategories { get; set; } = new List<Subcategory>();
     }
 }

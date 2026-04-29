@@ -51,7 +51,7 @@ const Admin = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axios.get("http://localhost:5142/api/Products");
+            const response = await axios.get("/api/Products");
             setProducts(response.data);
             setError(null);
         } catch (err) {
@@ -80,7 +80,7 @@ const Admin = () => {
             setEditingId(null);
             
             // Note: In a real app we'd make a PUT request to the backend.
-            // await axios.put(`http://localhost:5142/api/Products/${id}`, editForm);
+            // await axios.put(`/api/Products/${id}`, editForm);
         } catch (err) {
             console.error("Fehler beim Speichern:", err);
             alert("Fehler beim Speichern der Änderungen.");
@@ -114,7 +114,7 @@ const Admin = () => {
             });
 
             // Make POST request to backend
-            // await axios.post("http://localhost:5142/api/Products", newProductForm);
+            // await axios.post("/api/Products", newProductForm);
         } catch (err) {
             console.error("Fehler beim Anlegen:", err);
             alert("Fehler beim Erstellen des neuen Produkts.");

@@ -58,7 +58,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:5173")
               .AllowAnyHeader()
-              .AllowAnyMethod();
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
@@ -76,13 +77,13 @@ if (app.Environment.IsDevelopment())
 {
 }
 
+app.UseCors("DevProxyPolicy");
+
+app.UseHttpsRedirection();
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseHttpsRedirection();
-
-app.UseCors("DevProxyPolicy");
 
 app.Run();

@@ -3,6 +3,7 @@ using System;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(VeloraDbContext))]
-    partial class VeloraDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260428114239_AddSubcategoryTable")]
+    partial class AddSubcategoryTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.13");
@@ -58,7 +61,7 @@ namespace Backend.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Adresses");
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.Category", b =>
@@ -186,6 +189,12 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CategoryId1")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("INTEGER");
 
@@ -216,12 +225,11 @@ namespace Backend.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("SubcategoryId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("ProductId");
 
-                    b.HasIndex("SubcategoryId");
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("CategoryId1");
 
                     b.ToTable("Products");
                 });
@@ -249,7 +257,7 @@ namespace Backend.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Subcategories");
+                    b.ToTable("Subcategory");
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.User", b =>
@@ -258,7 +266,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AddressId")
+                    b.Property<int?>("AdressId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -298,13 +306,19 @@ namespace Backend.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("FirstName")
+                        .IsUnique();
+
+                    b.HasIndex("LastName")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.Address", b =>
                 {
                     b.HasOne("Backend.Models.Entities.User", "User")
-                        .WithOne("Address")
+                        .WithOne("Adress")
                         .HasForeignKey("Backend.Models.Entities.Address", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -376,29 +390,28 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Entities.Product", b =>
                 {
-                    b.HasOne("Backend.Models.Entities.Subcategory", "Subcategory")
-                        .WithMany("Products")
-                        .HasForeignKey("SubcategoryId")
+                    b.HasOne("Backend.Models.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Subcategory");
-                });
-
-            modelBuilder.Entity("Backend.Models.Entities.Subcategory", b =>
-                {
                     b.HasOne("Backend.Models.Entities.Category", "Category")
-                        .WithMany("Subcategories")
-                        .HasForeignKey("CategoryId")
+                        .WithMany()
+                        .HasForeignKey("CategoryId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Backend.Models.Entities.Category", b =>
+            modelBuilder.Entity("Backend.Models.Entities.Subcategory", b =>
                 {
-                    b.Navigation("Subcategories");
+                    b.HasOne("Backend.Models.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.Order", b =>
@@ -406,14 +419,9 @@ namespace Backend.Migrations
                     b.Navigation("OrderItems");
                 });
 
-            modelBuilder.Entity("Backend.Models.Entities.Subcategory", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Backend.Models.Entities.User", b =>
                 {
-                    b.Navigation("Address");
+                    b.Navigation("Adress");
                 });
 #pragma warning restore 612, 618
         }

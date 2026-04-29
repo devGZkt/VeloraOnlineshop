@@ -8,8 +8,8 @@ namespace Backend.Models.Entities
         public int UserId { get; set; }
 
         //FKs
-        public int? AdressId { get; set; }
-        public virtual Address? Adress { get; set; }
+        public int? AddressId { get; set; }
+        public virtual Address? Address { get; set; }
 
         //Fields
         public required string FirstName { get; set; }

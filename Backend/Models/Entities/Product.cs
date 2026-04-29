@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace Backend.Models.Entities
 {
@@ -9,8 +8,8 @@ namespace Backend.Models.Entities
         public int ProductId { get; set; }
         
         //FKs
-        public int CategoryId { get; set; }
-        public required virtual Category Category { get; set; }
+        public int SubcategoryId { get; set; }
+        public required virtual Subcategory Subcategory { get; set; }
 
         //Fields
         public required string Name { get; set; }
@@ -27,6 +26,6 @@ namespace Backend.Models.Entities
 
         public bool IsVisible { get; set; }
 
-        public int DisplayOrder { get; set; } //Prio 1-3
+        public int DisplayOrder { get; set; }
     }
 }

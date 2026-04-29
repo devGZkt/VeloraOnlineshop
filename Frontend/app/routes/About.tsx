@@ -23,16 +23,20 @@ const About = () => {
         
         {/* Story Section: Image & Text */}
         <section className="flex flex-col md:flex-row gap-12 items-center mb-24">
-          {/* Image Placeholder */}
-          <div className="w-full md:w-1/2">
-            <div className="aspect-[4/3] bg-[#e2e8e4] rounded-sm flex items-center justify-center relative overflow-hidden group">
-              <span className="text-[#8c9490] text-sm tracking-widest uppercase relative z-10">
-                Image Placeholder
-              </span>
-              {/* Optional subtle gradient to mimic a real photo container */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#e2e8e4] to-[#f2f4f3] group-hover:scale-105 transition-transform duration-700"></div>
+          {/* Image Placeholder  
+          //   <div className="aspect-[4/3] bg-[#e2e8e4] rounded-sm flex items-center justify-center relative overflow-hidden group">
+          //     <span className="text-[#8c9490] text-sm tracking-widest uppercase relative z-10">
+          //       Image Placeholder
+          //     </span>
+          //     {/* Optional subtle gradient to mimic a real photo container */}
+               {/* <div className="absolute inset-0 bg-gradient-to-tr from-[#e2e8e4] to-[#f2f4f3] group-hover:scale-105 transition-transform duration-700"></div>
+             </div>
+           </div>  */}
+            <div className="w-full md:w-1/2">
+                <h1 className="text-6xl font-serif text-[#3e564c] mb-6 align-center justify-center flex">
+                  Velora
+                </h1>
             </div>
-          </div>
 
           {/* Text Content */}
           <div className="w-full md:w-1/2 space-y-6">

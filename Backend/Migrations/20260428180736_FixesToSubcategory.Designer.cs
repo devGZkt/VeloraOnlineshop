@@ -3,6 +3,7 @@ using System;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(VeloraDbContext))]
-    partial class VeloraDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260428180736_FixesToSubcategory")]
+    partial class FixesToSubcategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.13");
@@ -219,9 +222,14 @@ namespace Backend.Migrations
                     b.Property<int>("SubcategoryId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("SubcategoryId1")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("SubcategoryId");
+
+                    b.HasIndex("SubcategoryId1");
 
                     b.ToTable("Products");
                 });
@@ -376,9 +384,15 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Entities.Product", b =>
                 {
-                    b.HasOne("Backend.Models.Entities.Subcategory", "Subcategory")
-                        .WithMany("Products")
+                    b.HasOne("Backend.Models.Entities.Subcategory", null)
+                        .WithMany()
                         .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Entities.Subcategory", "Subcategory")
+                        .WithMany()
+                        .HasForeignKey("SubcategoryId1")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -387,28 +401,16 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Entities.Subcategory", b =>
                 {
-                    b.HasOne("Backend.Models.Entities.Category", "Category")
-                        .WithMany("Subcategories")
+                    b.HasOne("Backend.Models.Entities.Category", null)
+                        .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Backend.Models.Entities.Category", b =>
-                {
-                    b.Navigation("Subcategories");
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.Order", b =>
                 {
                     b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Backend.Models.Entities.Subcategory", b =>
-                {
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Backend.Models.Entities.User", b =>

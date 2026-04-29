@@ -1,5 +1,6 @@
 ﻿using Backend.Models.Entities;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ namespace Backend.Controller
         {
             _db = db;
         }
+
 
         //Function to Search Product throught ID    
         [HttpGet("{id}")]
@@ -33,17 +35,21 @@ namespace Backend.Controller
             return Ok(foundProduct);
         }
 
-        //returns list of all products in db, with optional query parameters for categoryId, minPrice and maxPrice
-        [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] int? categordyId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
+
+
+        /// <summary>
+        /// returns list of all products in db, with optional query parameters for subcategoryId, minPrice and maxPrice
+        /// </summary>
+        [HttpGet] // Einfaches HttpGet ohne Routen-Template verhindert Konflikte
+        public async Task<IActionResult> GetProducts([FromQuery] int? subcategoryId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
         {
-            //IQueryable to build query on
+            // IQueryable to build query on
             var query = _db.Products.AsQueryable();
 
-            //Searches db for products with given categoryId, minPrice and maxPrice
-            if (categordyId.HasValue)
+            // Filters
+            if (subcategoryId.HasValue)
             {
-                query = query.Where(p => p.CategoryId == categordyId);
+                query = query.Where(p => p.SubcategoryId == subcategoryId);
             }
 
             if (minPrice.HasValue)
@@ -56,15 +62,14 @@ namespace Backend.Controller
                 query = query.Where(p => p.Price <= maxPrice);
             }
             
-            //Searches for products and returns list of products that match the query parameters
+            // Execute query and return list
             var products = await query.ToListAsync();
             return Ok(products);
         }
 
-
         //Route to create a new product
         [HttpPost("create-product")]
-        // [Authorize]
+        //[Authorize]
         public async Task<IActionResult> CreateProduct([FromBody] Product product)
         {
             if (!ModelState.IsValid)

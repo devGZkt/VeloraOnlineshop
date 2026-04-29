@@ -69,7 +69,7 @@ namespace Backend.Controller
                     ZipCode = createOrderRequest.ZipCode
                 };
 
-                _db.Adresses.Add(address);
+                _db.Addresses.Add(address);
                 await _db.SaveChangesAsync();
 
                 // Creates new order entity
