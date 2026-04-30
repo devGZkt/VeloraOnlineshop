@@ -41,20 +41,20 @@ namespace Backend.Controller
         /// returns list of all products in db, with optional query parameters for subcategoryId, minPrice and maxPrice
         /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetProducts([FromQuery] int? categoryId, [FromQuery] int? subcategoryId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
+        public async Task<IActionResult> GetProducts([FromQuery] string? categorySlug, [FromQuery] string? subcategorySlug, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
         {
             // IQueryable to build query on
             var query = _db.Products.AsQueryable();
 
             // Filters
-            if (categoryId.HasValue)
+            if (!string.IsNullOrWhiteSpace(categorySlug))
             {
-                query = query.Where(p => p.Subcategory.CategoryId == categoryId);
+                query = query.Where(p => p.Subcategory.Category.Slug == categorySlug);
             }
 
-            if (subcategoryId.HasValue)
+            if (!string.IsNullOrWhiteSpace(subcategorySlug))
             {
-                query = query.Where(p => p.SubcategoryId == subcategoryId);
+                query = query.Where(p => p.Subcategory.Slug == subcategorySlug);
             }
 
             if (minPrice.HasValue)
