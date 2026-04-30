@@ -40,13 +40,18 @@ namespace Backend.Controller
         /// <summary>
         /// returns list of all products in db, with optional query parameters for subcategoryId, minPrice and maxPrice
         /// </summary>
-        [HttpGet] // Einfaches HttpGet ohne Routen-Template verhindert Konflikte
-        public async Task<IActionResult> GetProducts([FromQuery] int? subcategoryId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
+        [HttpGet]
+        public async Task<IActionResult> GetProducts([FromQuery] int? categoryId, [FromQuery] int? subcategoryId, [FromQuery] int? minPrice, [FromQuery] int? maxPrice)
         {
             // IQueryable to build query on
             var query = _db.Products.AsQueryable();
 
             // Filters
+            if (categoryId.HasValue)
+            {
+                query = query.Where(p => p.Subcategory.CategoryId == categoryId);
+            }
+
             if (subcategoryId.HasValue)
             {
                 query = query.Where(p => p.SubcategoryId == subcategoryId);
