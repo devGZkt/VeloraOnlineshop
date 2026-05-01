@@ -7,7 +7,7 @@ Categories & Sub-Categories:
   - Mytologik Parfums
   - Special/Nieschenparfum
   - Raumdüfte
-3. Pflege & Hygiene
+2. Pflege & Hygiene
   - Körperpflege
   - Duschgels Damen
   - Duschgels Herren
@@ -22,16 +22,16 @@ Categories & Sub-Categories:
   - Intimpflege
   - Mund und Zähne
   - Zahnpflege
-4. Gesicht & Haut
+3. Gesicht & Haut
   - Gesichtspflege
   - Hautpflege
-5. Haar & Bart
+4. Haar & Bart
   - Haarpflege
   - Shampoo
   - Haarpflege
   - Anti-Haarverlust
   - Bartpflege
-6. Make-Up
+5. Make-Up
   - Teint
   - Flüssige Foundations
   - Concleaer
@@ -50,16 +50,16 @@ Categories & Sub-Categories:
   - Lippenbalsam
   - Lippenstifte
   - Flüssige Lippenstifte
-7. Öle & Essenzen
+6. Öle & Essenzen
   - Ätherische Öle
   - Pflanzliche Öle
-8. Accessoires
+7. Accessoires
   - Sonnenbrillen Damen
   - Sonnenbrillen Herren
-9. Haushalt & Reinigung
+8. Haushalt & Reinigung
   - Putzmittel
   - Putzutensilien
-10. Ernährung & Vitalität
+9. Ernährung & Vitalität
   - Mahlzeitenersatz
   - Funktionalle Nahrungsergänzunsmittel
   - Aloe-Vera-Getränke
