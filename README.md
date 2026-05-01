@@ -51,5 +51,15 @@ Categories & Sub-Categories:
   - Lippenstifte
   - Flüssige Lippenstifte
 7. Öle & Essenzen
-8. Haushalt & Reinigung
-9. Ernährung & Vitalität
+  - Ätherische Öle
+  - Pflanzliche Öle
+8. Accessoires
+  - Sonnenbrillen Damen
+  - Sonnenbrillen Herren
+9. Haushalt & Reinigung
+  - Putzmittel
+  - Putzutensilien
+10. Ernährung & Vitalität
+  - Mahlzeitenersatz
+  - Funktionalle Nahrungsergänzunsmittel
+  - Aloe-Vera-Getränke
