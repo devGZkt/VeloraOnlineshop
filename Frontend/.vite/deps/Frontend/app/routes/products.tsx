@@ -1,4 +1,5 @@
 import Nav from "../components/Nav"
+import Footer from "../components/Footer"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router"
 import axios from "axios"
@@ -40,6 +41,7 @@ const Products = () => {
             try {
                 const response = await axios.get("/api/Products");
                 setProducts(response.data);
+                console.log("Fetched products:", response.data);
             } catch (err) {
                 setError("Failed to load products.");
                 console.error(err);
@@ -54,14 +56,6 @@ const Products = () => {
     const filteredProducts = activeCategory 
         ? products.filter(p => p.categoryId === activeCategory.id)
         : products;
-
-    const OpenProduct = (productId: number) => {
-        alert(`Open product with ID: ${productId}`);
-    }
-
-    const AddProductToCart = (productId: number) => {
-        alert(`Add product with ID: ${productId} to cart`);
-    }
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -97,8 +91,7 @@ const Products = () => {
                                     )}
                                 </div>
                                 <div className="p-6 flex flex-col flex-grow">
-                                    <h2 onClick={() => OpenProduct(product.productId)}
-                                        className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{product.name}</h2>
+                                    <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{product.name}</h2>
                                     <p className="text-gray-500 mb-4 text-sm flex-grow line-clamp-3">
                                         {product.shortDescription || "No description available."}
                                     </p>
@@ -106,9 +99,7 @@ const Products = () => {
                                         <span className="text-2xl font-black text-gray-900">
                                             €{product.price.toFixed(2)}
                                         </span>
-                                        <button
-                                            onClick={() => AddProductToCart(product.productId)} 
-                                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-200 transition-all active:scale-95 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-200 transition-all active:scale-95 focus:ring-2 focus:ring-blue-500 focus:outline-none">
                                             Buy
                                         </button>
                                     </div>
@@ -124,6 +115,7 @@ const Products = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     )
 }
