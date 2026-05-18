@@ -1,4 +1,4 @@
-﻿using Backend.Models.Entities;
+using Backend.Models.Entities;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
