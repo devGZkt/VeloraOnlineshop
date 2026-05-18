@@ -1,6 +1,7 @@
 import Nav from "../components/Nav"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "react-router"
+import { useCart } from "app/context/CartContext"
 import axios from "axios"
 
 interface Product {
@@ -37,8 +38,12 @@ const Products = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:5142/api/Products?category=${categorySlug}`);
+                const url = categorySlug
+                    ? `/api/products?categorySlug=${categorySlug}`
+                    : "/api/products";
+                const response = await axios.get(url);
                 setProducts(response.data);
             } catch (err) {
                 setError("Failed to load products.");
@@ -49,11 +54,13 @@ const Products = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, [categorySlug]);
 
-    const filteredProducts = activeCategory 
-        ? products.filter(p => p.categoryId === activeCategory.id)
-        : products;
+    const filteredProducts = products;
+
+
+    //access to cart logic
+    const { addToCart } = useCart();
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -97,7 +104,7 @@ const Products = () => {
                                         <span className="text-2xl font-black text-gray-900">
                                             €{product.price.toFixed(2)}
                                         </span>
-                                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-200 transition-all active:scale-95 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md shadow-blue-200 transition-all active:scale-95 focus:ring-2 focus:ring-blue-500 focus:outline-none" onClick={() => addToCart(product.productId)}>
                                             Buy
                                         </button>
                                     </div>

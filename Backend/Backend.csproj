@@ -34,4 +34,8 @@
     <Folder Include="Routes\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="velora.db" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

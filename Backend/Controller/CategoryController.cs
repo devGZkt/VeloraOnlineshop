@@ -1,4 +1,4 @@
-﻿using Backend.Models.DTOs;
+using Backend.Models.DTOs;
 using                Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,7 +11,7 @@ namespace Backend.Controller
         private readonly VeloraDbContext? _db;
         public CategoryController(VeloraDbContext? db)
         {
-            db = _db;
+            _db = db;
         }
 
         [HttpPost("create-cateogry")]
