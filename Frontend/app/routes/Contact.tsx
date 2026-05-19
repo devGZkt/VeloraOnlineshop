@@ -23,16 +23,21 @@ const Contact = () => {
       return;
     }
 
-    axios.post('/api/contact', { name, email, message })
+    axios.post('/api/usermessage', { name, email, message })
       .then(response => {
         console.log(response.data);
         setName('');
         setEmail('');
         setMessage('');
+        LockBtn();
       })
       .catch(error => {
         console.error('Error submitting contact form:', error);
       });
+
+      const LockBtn = () => {
+
+      }
   };
 
   return (

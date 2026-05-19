@@ -1,9 +1,8 @@
 
-namespace Backend.Models.Entities
+namespace Backend.Models.DTOs
 {
-    public class ContactMessage
+    public class ContactMessageDTO
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
         public required string Email { get; set; }
         public required string Message { get; set; }
