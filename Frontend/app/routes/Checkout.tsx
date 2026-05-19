@@ -42,7 +42,7 @@ const Checkout = () => {
     return (
         <div className="min-h-screen bg-[#f2f4f3] font-sans">
             <Nav />
-            
+
             <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-serif text-[#3e564c] mb-10">Checkout</h1>
 
@@ -96,27 +96,27 @@ const Checkout = () => {
                                 <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={(e) => e.preventDefault()}>
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">Email address</label>
-                                        <input type="email" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="you@example.com" />
+                                        <input type="email" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="you@example.com" />
                                     </div>
                                     <div className="md:col-span-1">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">First name</label>
-                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="Jane" />
+                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="Jane" />
                                     </div>
                                     <div className="md:col-span-1">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">Last name</label>
-                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="Doe" />
+                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="Doe" />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">Address</label>
-                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="123 Main St" />
+                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="123 Main St" />
                                     </div>
                                     <div className="md:col-span-1">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">City</label>
-                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="New York" />
+                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="New York" />
                                     </div>
                                     <div className="md:col-span-1">
                                         <label className="block text-sm font-medium text-[#3e564c] mb-1">Postal code</label>
-                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors" placeholder="10001" />
+                                        <input type="text" required className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors !text-[#2a3731]" placeholder="10001" />
                                     </div>
                                 </form>
                             </div>
@@ -145,7 +145,7 @@ const Checkout = () => {
                                     </div>
                                 </dl>
 
-                                <button 
+                                <button
                                     onClick={handlePlaceOrder}
                                     className="w-full mt-8 bg-[#3e564c] text-white px-6 py-4 rounded hover:bg-[#2a3731] transition duration-300 font-medium tracking-wide flex justify-center items-center gap-2 group shadow-md"
                                 >
@@ -154,12 +154,12 @@ const Checkout = () => {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                     </svg>
                                 </button>
-                                
+
                                 <div className="mt-4 flex items-center justify-center gap-2 text-xs text-[#8c9490]">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 00-2-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                     </svg>
-                                    Secure checkout via Velora payments
+                                    Secure checkout via Stripe Payments
                                 </div>
                             </div>
                         </div>
@@ -167,7 +167,6 @@ const Checkout = () => {
                 )}
             </div>
         </div>
-    );
-};
+    ); };
 
 export default Checkout;

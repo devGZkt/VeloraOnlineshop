@@ -27,5 +27,7 @@ namespace Backend.Models.Entities
         public bool IsVisible { get; set; }
 
         public int DisplayOrder { get; set; }
+
+        public string? ImageUrl { get; set; }
     }
 }

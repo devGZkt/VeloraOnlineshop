@@ -90,17 +90,17 @@ const Contact = () => {
             />
           </div>
 
-          <div className="mb-8">
-            <label htmlFor="message" className="block text-sm tracking-widest uppercase text-[#2a3731] mb-2">
-              Message
-            </label>
-            <textarea 
-              id="message" 
-              rows={5} 
-              className="w-full bg-white border border-[#e2e8e4] text-[#2a3731] px-4 py-3 focus:outline-none focus:border-[#68a49c] focus:ring-1 focus:ring-[#68a49c] transition-colors rounded-sm resize-none"
-              placeholder="How can we help you?"
-            ></textarea>
-          </div>
+            <div className="mb-8">
+                <label htmlFor="message" className="block text-sm tracking-widest uppercase text-[#2a3731] mb-2">
+                    Message
+                </label>
+                <textarea
+                    id="message"
+                    rows={5}
+                    className="w-full bg-white border border-[#e2e8e4] !text-[#2a3731] px-4 py-3 focus:outline-none focus:border-[#68a49c] focus:ring-1 focus:ring-[#68a49c] transition-colors rounded-sm resize-none"
+                    placeholder="How can we help you?"
+                ></textarea>
+            </div>
 
           <button 
             type="submit" 

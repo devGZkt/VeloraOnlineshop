@@ -263,8 +263,8 @@ const Nav = () => {
                                     <button
                                         onClick={() => setIsMobileProductsOpen(!isMobileProductsOpen)}
                                         className={`w-full flex justify-between items-center text-sm tracking-widest uppercase transition duration-300 py-2
-                      ${activeLink === link.name ? 'text-[#2a3731] font-medium' : 'text-[#8c9490] hover:text-[#2a3731]'}`}
-                                    >
+                                        ${activeLink === link.name ? 'text-[#2a3731] font-medium' : 'text-[#8c9490] hover:text-[#2a3731]'}`}
+                                        >
                                         <span>{link.name}</span>
                                         <svg className={`w-4 h-4 transition-transform duration-300 ${isMobileProductsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -295,12 +295,11 @@ const Nav = () => {
                                     to={link.href}
                                     onClick={() => setIsOpen(false)}
                                     className={`block text-sm tracking-widest uppercase transition duration-300 py-2
-                    ${activeLink === link.name
+                                    ${activeLink === link.name
                                             ? 'text-[#2a3731] font-medium'
                                             : 'text-[#8c9490] hover:text-[#2a3731]'
                                         }
-                  `}
-                                >
+                                    `}>
                                     {link.name}
                                 </Link>
                             )}
