@@ -1,4 +1,3 @@
-
 namespace Backend.Models.DTOs
 {
     public class ContactMessageDTO
