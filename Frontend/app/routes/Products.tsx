@@ -17,7 +17,6 @@ interface Product {
     isVisible: boolean;
 }
 
-//Fixed mapping of hardcoded urls slugs to their respective Database IDs and german display names
 const CATEGORIES = {
     "parfuem-duefte": { id: 1, name: "Parfüm & Düfte" },
     "pflege-hygiene": { id: 2, name: "Pflege & Hygiene" },

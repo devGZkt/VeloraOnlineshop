@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "chrome",
             "request": "launch",
@@ -9,26 +10,24 @@
             "webRoot": "${workspaceFolder}/Frontend",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
-                "webpack:///./src/*": "${webRoot}/*",
+                // FÜR VITE ANGEPASST:
                 "vfs://*": "${webRoot}/*",
-                "/@fs/*": "*"
+                "vite://modules/*": "${webRoot}/*" 
             },
-            "breakOnLoad": true
+            "timeout": 30000 // Falls das Backend mal länger zum Starten braucht
         },
         {
             "name": "Launch Backend (.NET)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Backend/bin/Debug/net8.0/Backend.dll",
+            // TIPP: Nutze das Makro für die .dll, falls sich die Version mal ändert
+            "program": "${workspaceFolder}/Backend/bin/Debug/net9.0/Backend.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Backend",
             "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
             }
         },
         {

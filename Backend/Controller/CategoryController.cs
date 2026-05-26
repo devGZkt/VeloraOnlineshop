@@ -18,13 +18,13 @@ namespace Backend.Controller
 
 
         [HttpGet]
-        public async Task<IActionResult> GetSubCategories([FromQuery] string? categorySlug)
+        public async Task<IActionResult> GetSubCategories([FromQuery] int? categoryId)
         {
             var query = _db.Subcategories.AsNoTracking();
 
-            if (categorySlug.HasValue)
+            if (categoryId.HasValue)
             {
-                query = query.Where(s => s.CategorySlug == categorySlug);
+                query = query.Where(s => s.CategoryId == categoryId);
             }
 
             var result = await query.ToListAsync();
