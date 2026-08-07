@@ -1,46 +1,121 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const CartContext = createContext<any>(null);
+export interface CartItem {
+    id: string | number;
+    productId?: number;
+    name: string;
+    price: number;
+    image?: string;
+    quantity: number;
+    shortDescription?: string;
+}
 
-//
+interface CartContextType {
+    cart: CartItem[];
+    addToCart: (product: any) => void;
+    removeFromCart: (productId: string | number) => void;
+    updateQuantity: (productId: string | number, quantity: number) => void;
+    clearCart: () => void;
+}
+
+const CartContext = createContext<CartContextType | null>(null);
+
 export function CartProvider({ children }: { children: React.ReactNode }) {
-    const [cart, setCart] = useState<any[]>(() => {
+    const [cart, setCart] = useState<CartItem[]>(() => {
         if (typeof window !== "undefined") {
             const storedCart = localStorage.getItem("velora-cart");
-            if (storedCart) return JSON.parse(storedCart);
-            
-            // Default mock data for presentation
-            return [
-                { id: "1", name: "Velora Signature Blend", price: 24.99, image: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?q=80&w=2670&auto=format&fit=crop" },
-                { id: "2", name: "Artisanal Ceramic Mug", price: 18.50, image: "https://images.unsplash.com/photo-1514228742587-6b1558fbed20?q=80&w=2670&auto=format&fit=crop" },
-                { id: "3", name: "Premium Coffee Grinder", price: 85.00, image: "https://images.unsplash.com/photo-1534349762230-e0cadf78f505?q=80&w=2670&auto=format&fit=crop" },
-                { id: "4", name: "Organic Tea Leaves", price: 12.00, image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?q=80&w=2670&auto=format&fit=crop" }
-            ];
+            if (storedCart) {
+                try {
+                    return JSON.parse(storedCart);
+                } catch (e) {
+                    console.error("Failed to parse stored cart", e);
+                }
+            }
         }
         return [];
     });
 
     useEffect(() => {
-        localStorage.setItem("velora-cart", JSON.stringify(cart));
+        if (typeof window !== "undefined") {
+            localStorage.setItem("velora-cart", JSON.stringify(cart));
+        }
     }, [cart]);
 
     const addToCart = (product: any) => {
-        setCart((prev: any[]) => [...prev, product]);
-    }
+        const id = product.id ?? product.productId;
+        if (id === undefined || id === null) return;
 
-    const removeFromCart = (productId: string) => {
-        setCart((prev: any[]) => prev.filter(item => item.id !== productId));
-    }
+        setCart((prev: CartItem[]) => {
+            const existingIndex = prev.findIndex(
+                (item) => String(item.id ?? item.productId) === String(id)
+            );
+            if (existingIndex > -1) {
+                const updated = [...prev];
+                const item = updated[existingIndex];
+                updated[existingIndex] = {
+                    ...item,
+                    quantity: (item.quantity || 1) + 1,
+                };
+                return updated;
+            }
+            return [
+                ...prev,
+                {
+                    id: id,
+                    productId: product.productId || (typeof id === "number" ? id : parseInt(id, 10) || 0),
+                    name: product.name || "Product",
+                    price: product.price || 0,
+                    image: product.image,
+                    quantity: product.quantity || 1,
+                    shortDescription: product.shortDescription,
+                },
+            ];
+        });
+    };
+
+    const updateQuantity = (productId: string | number, quantity: number) => {
+        if (quantity <= 0) {
+            removeFromCart(productId);
+            return;
+        }
+        setCart((prev: CartItem[]) =>
+            prev.map((item) =>
+                String(item.id ?? item.productId) === String(productId)
+                    ? { ...item, quantity }
+                    : item
+            )
+        );
+    };
+
+    const removeFromCart = (productId: string | number) => {
+        setCart((prev: CartItem[]) =>
+            prev.filter((item) => String(item.id ?? item.productId) !== String(productId))
+        );
+    };
 
     const clearCart = () => {
         setCart([]);
-    }
+    };
 
     return (
-        <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+        <CartContext.Provider
+            value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart }}
+        >
             {children}
         </CartContext.Provider>
     );
 }
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => {
+    const context = useContext(CartContext);
+    if (!context) {
+        return {
+            cart: [],
+            addToCart: () => {},
+            removeFromCart: () => {},
+            updateQuantity: () => {},
+            clearCart: () => {},
+        };
+    }
+    return context;
+};

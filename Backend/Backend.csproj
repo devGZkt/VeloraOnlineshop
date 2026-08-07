@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e367ecc8-77a9-4b76-ad17-86ed98a0958e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,15 +28,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
+    <PackageReference Include="Stripe.net" Version="52.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Routes\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="velora.db" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

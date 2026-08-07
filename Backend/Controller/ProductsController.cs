@@ -1,4 +1,4 @@
-using Backend.Models.Entities;
+﻿using Backend.Models.Entities;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ namespace Backend.Controller
         }
 
 
-        //Function to Search Product throught ID
+        //Function to Search Product throught ID    
         [HttpGet("{id}")]
         public async Task<IActionResult?> GetProductByIdAsync(int id)
         {

@@ -1,3 +1,4 @@
+//import { reactRouter } from "@react-router/";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
@@ -11,13 +12,12 @@ export default defineConfig({
   server: {
     port: 5173,
     strictPort: true,
-    sourcemapIgnoreList: false,
     proxy: {
       "/api": {
-        target: "http://localhost:5142",
+        target: process.env.VITE_API_TARGET ?? "http://localhost:5142",
         changeOrigin: true,
         secure: false,
-        }
       }
     }
+  }
 });

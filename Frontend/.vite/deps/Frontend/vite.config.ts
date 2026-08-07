@@ -5,8 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
-    server: {
-        sourcemapIgnoreList: false,
+  server: {
     proxy: {
       "/api": {
         target: "http://localhost:5142",

@@ -83,32 +83,6 @@ namespace Backend.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Backend.Models.Entities.ContactMessage", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContactMessages");
-                });
-
             modelBuilder.Entity("Backend.Models.Entities.Order", b =>
                 {
                     b.Property<int>("OrderId")
@@ -214,9 +188,6 @@ namespace Backend.Migrations
 
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("TEXT");
 
                     b.Property<bool>("IsVisible")
                         .HasColumnType("INTEGER");

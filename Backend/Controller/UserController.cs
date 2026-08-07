@@ -24,7 +24,7 @@ namespace Backend.Controller
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> CreateUser([FromBody]UserRegisterDTO registerDto)
+        public async Task<IActionResult> CreateUser([FromBody] UserRegisterDTO registerDto)
         {
             //Check if data in object is valid type else returns 4xx
             if (!ModelState.IsValid)
@@ -32,15 +32,12 @@ namespace Backend.Controller
                 return BadRequest(registerDto);
             }
 
-            
-            bool exists = await _db.Users
-                .AnyAsync(u => u.Email == registerDto.Email);
+            bool exists = await _db.Users.AnyAsync(u => u.Email == registerDto.Email);
 
             if (exists)
             {
                 return BadRequest("Email allready exists. Please log in or choose another email.");
             }
-
 
             //Creates new User object entity from UserRegsiterDTO
             var newUser = new User
@@ -52,7 +49,7 @@ namespace Backend.Controller
                 PwHashed = BCrypt.Net.BCrypt.HashPassword(registerDto.Pw),
                 DateOfBirth = registerDto.DateOfBrith,
                 CreatedAt = DateTime.UtcNow,
-                EmailVerified = false
+                EmailVerified = false,
             };
 
             //Creates new record for user in db, saves it and returns 201
@@ -61,15 +58,14 @@ namespace Backend.Controller
             return Created();
         }
 
-
         // Checks userlogindata (pw and email/username) and returns token if valid
         [HttpPost("login")]
-        public async Task<IActionResult> CheckUserLogin([FromBody]UserLoginDTO existingUser)
+        public async Task<IActionResult> CheckUserLogin([FromBody] UserLoginDTO existingUser)
         {
             //Picks out username and pw form User-object
             var username = existingUser.Email;
             var pw = existingUser.Pw;
-            
+
             //Checks if in User-model are valid else returns (400)
             if (!ModelState.IsValid)
             {
@@ -91,7 +87,7 @@ namespace Backend.Controller
                 HttpOnly = true,
                 Secure = true, //sends via HTTPS
                 SameSite = SameSiteMode.Strict, //Only stores if request comes from valid domain
-                Expires = DateTime.UtcNow.AddHours(4)
+                Expires = DateTime.UtcNow.AddHours(4),
             };
 
             //Token gets added as header for browser
