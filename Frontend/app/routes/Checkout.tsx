@@ -265,7 +265,7 @@ const Checkout = () => {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="kunden@example.com"
                     />
                   </div>
@@ -276,7 +276,7 @@ const Checkout = () => {
                       required
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="Max"
                     />
                   </div>
@@ -287,7 +287,7 @@ const Checkout = () => {
                       required
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="Mustermann"
                     />
                   </div>
@@ -298,7 +298,7 @@ const Checkout = () => {
                       required
                       value={street}
                       onChange={(e) => setStreet(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="Hauptstrasse"
                     />
                   </div>
@@ -309,7 +309,7 @@ const Checkout = () => {
                       required
                       value={houseNr}
                       onChange={(e) => setHouseNr(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="10a"
                     />
                   </div>
@@ -320,7 +320,7 @@ const Checkout = () => {
                       required
                       value={zipCode}
                       onChange={(e) => setZipCode(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="8000"
                     />
                   </div>
@@ -331,7 +331,7 @@ const Checkout = () => {
                       required
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="w-full border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
+                      className="w-full bg-white text-[#2a3731] border-[#e2e8e4] rounded-md shadow-sm focus:ring-[#68a49c] focus:border-[#68a49c] px-4 py-2 border outline-none transition-colors"
                       placeholder="Zürich"
                     />
                   </div>
