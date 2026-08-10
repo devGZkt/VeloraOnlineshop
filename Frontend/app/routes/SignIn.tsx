@@ -28,6 +28,7 @@ const SignIn = () => {
                 firstName: res.data.firstName,
                 lastName: res.data.lastName,
                 email: res.data.email,
+                isAdmin: res.data.isAdmin,
             });
             navigate("/");
         } catch (err: any) {

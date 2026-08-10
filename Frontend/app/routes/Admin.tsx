@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 import Nav from '../components/Nav';
+import { useAuth } from '../context/AuthContext';
 
 interface Product {
     productId: number;
-    categoryId: number;
+    subcategoryId: number;
     name: string;
     sku?: string;
     slug?: string;
@@ -12,41 +14,73 @@ interface Product {
     longDescription?: string;
     price: number;
     isVisible: boolean;
+    displayOrder: number;
 }
 
-const CATEGORIES: Record<number, string> = {
-    1: "Parfüm & Düfte",
-    2: "Pflege & Hygiene",
-    3: "Gesicht & Haut",
-    4: "Haar & Bart",
-    5: "Make-Up",
-    6: "Öle & Essenzen",
-    7: "Haushalt & Reinigung",
-    8: "Ernährung & Vitalität"
+interface Subcategory {
+    subcategoryId: number;
+    slug?: string;
+    description?: string;
+}
+
+interface Category {
+    categoryId: number;
+    slug?: string;
+    description?: string;
+    subcategories: Subcategory[];
+}
+
+const emptyProductForm: Partial<Product> = {
+    name: '',
+    shortDescription: '',
+    price: 0,
+    isVisible: true,
+    displayOrder: 0,
 };
 
+const categoryLabel = (c: { description?: string; slug?: string; categoryId?: number; subcategoryId?: number }) =>
+    c.description || c.slug || `#${c.categoryId ?? c.subcategoryId}`;
+
 const Admin = () => {
+    const { user, isLoading: authLoading } = useAuth();
+    const navigate = useNavigate();
+
     const [products, setProducts] = useState<Product[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editForm, setEditForm] = useState<Partial<Product>>({});
     const [activeTab, setActiveTab] = useState('products');
-    
+
     // New States
     const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<number | 'ALL'>('ALL');
     const [isAddingNew, setIsAddingNew] = useState(false);
-    const [newProductForm, setNewProductForm] = useState<Partial<Product>>({
-        categoryId: 1,
-        name: '',
-        shortDescription: '',
-        price: 0,
-        isVisible: true
-    });
+    const [newProductForm, setNewProductForm] = useState<Partial<Product>>(emptyProductForm);
 
     useEffect(() => {
+        if (authLoading) return;
+        if (!user || !user.isAdmin) {
+            navigate('/', { replace: true });
+        }
+    }, [authLoading, user, navigate]);
+
+    useEffect(() => {
+        if (authLoading || !user?.isAdmin) return;
         fetchProducts();
-    }, []);
+        fetchCategories();
+    }, [authLoading, user]);
+
+    const subcategories = useMemo(
+        () => categories.flatMap(c => c.subcategories.map(s => ({ ...s, categoryLabel: categoryLabel(c) }))),
+        [categories]
+    );
+
+    const subcategoryToCategory = useMemo(() => {
+        const map = new Map<number, number>();
+        categories.forEach(c => c.subcategories.forEach(s => map.set(s.subcategoryId, c.categoryId)));
+        return map;
+    }, [categories]);
 
     const fetchProducts = async () => {
         try {
@@ -62,6 +96,15 @@ const Admin = () => {
         }
     };
 
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get("/api/Category");
+            setCategories(response.data);
+        } catch (err) {
+            console.error("Fehler beim Laden der Kategorien:", err);
+        }
+    };
+
     const handleEditClick = (product: Product) => {
         setEditingId(product.productId);
         setEditForm(product);
@@ -74,47 +117,50 @@ const Admin = () => {
     };
 
     const handleSave = async (id: number) => {
+        if (!editForm.subcategoryId) {
+            alert("Bitte eine Unterkategorie auswählen.");
+            return;
+        }
+
         try {
-            // Update local state optimistic UI
-            setProducts(products.map(p => p.productId === id ? { ...p, ...editForm } as Product : p));
+            const response = await axios.put(`/api/Products/${id}`, editForm, { withCredentials: true });
+            setProducts(products.map(p => p.productId === id ? response.data : p));
             setEditingId(null);
-            
-            // Note: In a real app we'd make a PUT request to the backend.
-            // await axios.put(`/api/Products/${id}`, editForm);
+            setEditForm({});
         } catch (err) {
             console.error("Fehler beim Speichern:", err);
             alert("Fehler beim Speichern der Änderungen.");
-            fetchProducts(); // Revert on error
+        }
+    };
+
+    const handleDelete = async (id: number) => {
+        if (!confirm("Dieses Produkt wirklich löschen?")) return;
+
+        try {
+            await axios.delete(`/api/Products/${id}`, { withCredentials: true });
+            setProducts(products.filter(p => p.productId !== id));
+        } catch (err) {
+            console.error("Fehler beim Löschen:", err);
+            alert("Fehler beim Löschen des Produkts.");
         }
     };
 
     const handleCreateNewProduct = async () => {
+        if (!newProductForm.name) {
+            alert("Bitte einen Titel eingeben.");
+            return;
+        }
+
+        if (!newProductForm.subcategoryId) {
+            alert("Bitte eine Unterkategorie auswählen.");
+            return;
+        }
+
         try {
-            if (!newProductForm.name) {
-                alert("Bitte einen Titel eingeben.");
-                return;
-            }
-
-            // Generate a fake ID for UI purposes since there's no working backend POST yet
-            const fakeId = Math.max(0, ...products.map(p => p.productId)) + 1;
-            const newProduct = {
-                ...newProductForm,
-                productId: fakeId
-            } as Product;
-
-            // Optimistic UI insert
-            setProducts([newProduct, ...products]);
+            const response = await axios.post("/api/Products/create-product", newProductForm, { withCredentials: true });
+            setProducts([response.data, ...products]);
             setIsAddingNew(false);
-            setNewProductForm({
-                categoryId: 1,
-                name: '',
-                shortDescription: '',
-                price: 0,
-                isVisible: true
-            });
-
-            // Make POST request to backend
-            // await axios.post("/api/Products", newProductForm);
+            setNewProductForm(emptyProductForm);
         } catch (err) {
             console.error("Fehler beim Anlegen:", err);
             alert("Fehler beim Erstellen des neuen Produkts.");
@@ -125,26 +171,37 @@ const Admin = () => {
         if (selectedCategoryFilter === 'ALL') {
             return products;
         }
-        return products.filter(p => p.categoryId === selectedCategoryFilter);
-    }, [products, selectedCategoryFilter]);
+        return products.filter(p => subcategoryToCategory.get(p.subcategoryId) === selectedCategoryFilter);
+    }, [products, selectedCategoryFilter, subcategoryToCategory]);
+
+    if (authLoading || !user?.isAdmin) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+                <Nav />
+                <div className="flex-1 flex items-center justify-center text-gray-500">
+                    {authLoading ? "Lädt..." : "Zugriff verweigert."}
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
             <Nav />
-            
+
             <div className="flex flex-1">
                 {/* Sidebar */}
                 <aside className="w-64 bg-white border-r border-gray-200 shadow-sm hidden md:block">
                     <div className="p-6">
                         <h2 className="text-xl font-serif font-bold text-[#2a3731] mb-6">Velora Admin</h2>
                         <nav className="space-y-2">
-                            <button 
+                            <button
                                 onClick={() => setActiveTab('products')}
                                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-[#68a49c] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}
                             >
                                 Produkte
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setActiveTab('categories')}
                                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-[#68a49c] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}
                             >
@@ -162,18 +219,18 @@ const Admin = () => {
                                 <h1 className="text-3xl font-bold text-gray-900 mb-4">
                                     {activeTab === 'products' ? 'Produkte Verwalten' : 'Kategorien Verwalten'}
                                 </h1>
-                                
+
                                 {activeTab === 'products' && (
                                     <div className="flex items-center gap-3">
                                         <label className="text-sm font-medium text-gray-600">Filter:</label>
-                                        <select 
+                                        <select
                                             className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#68a49c] focus:border-[#68a49c] block px-3 py-2 shadow-sm outline-none"
                                             value={selectedCategoryFilter}
                                             onChange={(e) => setSelectedCategoryFilter(e.target.value === 'ALL' ? 'ALL' : Number(e.target.value))}
                                         >
                                             <option value="ALL">Alle Kategorien</option>
-                                            {Object.entries(CATEGORIES).map(([id, name]) => (
-                                                <option key={id} value={id}>{name}</option>
+                                            {categories.map((c) => (
+                                                <option key={c.categoryId} value={c.categoryId}>{categoryLabel(c)}</option>
                                             ))}
                                         </select>
                                     </div>
@@ -181,7 +238,7 @@ const Admin = () => {
                             </div>
 
                             {activeTab === 'products' && (
-                                <button 
+                                <button
                                     onClick={() => {
                                         setIsAddingNew(!isAddingNew);
                                         setEditingId(null);
@@ -218,8 +275,8 @@ const Admin = () => {
                                             <div className="space-y-4">
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
-                                                    <input 
-                                                        type="text" 
+                                                    <input
+                                                        type="text"
                                                         placeholder="z.B. Aqua de Parfum"
                                                         className="w-full text-smborder border-gray-300 rounded px-3 py-2.5 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none"
                                                         value={newProductForm.name}
@@ -227,22 +284,27 @@ const Admin = () => {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kategorie</label>
-                                                    <select 
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Unterkategorie</label>
+                                                    <select
                                                         className="w-full text-sm border border-gray-300 rounded px-3 py-2.5 outline-none focus:ring-2 focus:ring-[#68a49c]"
-                                                        value={newProductForm.categoryId}
-                                                        onChange={(e) => setNewProductForm({...newProductForm, categoryId: parseInt(e.target.value)})}
+                                                        value={newProductForm.subcategoryId ?? ''}
+                                                        onChange={(e) => setNewProductForm({...newProductForm, subcategoryId: parseInt(e.target.value)})}
                                                     >
-                                                        {Object.entries(CATEGORIES).map(([id, name]) => (
-                                                            <option key={id} value={id}>{name}</option>
+                                                        <option value="" disabled>Bitte wählen...</option>
+                                                        {categories.map((c) => (
+                                                            <optgroup key={c.categoryId} label={categoryLabel(c)}>
+                                                                {c.subcategories.map((s) => (
+                                                                    <option key={s.subcategoryId} value={s.subcategoryId}>{categoryLabel(s)}</option>
+                                                                ))}
+                                                            </optgroup>
                                                         ))}
                                                     </select>
                                                 </div>
                                                 <div className="flex items-center gap-6 pt-2">
                                                     <div className="flex-1">
                                                         <label className="block text-sm font-medium text-gray-700 mb-1">Preis (€)</label>
-                                                        <input 
-                                                            type="number" 
+                                                        <input
+                                                            type="number"
                                                             step="0.01"
                                                             className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none"
                                                             value={newProductForm.price}
@@ -252,9 +314,9 @@ const Admin = () => {
                                                     <div className="flex-1 pt-6 text-center">
                                                         <label className="inline-flex items-center cursor-pointer">
                                                             <span className="mr-3 text-sm font-medium text-gray-700">{newProductForm.isVisible ? 'Sichtbar (Aktiv)' : 'Versteckt (Inaktiv)'}</span>
-                                                            <input 
-                                                                type="checkbox" 
-                                                                className="sr-only peer" 
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
                                                                 checked={newProductForm.isVisible}
                                                                 onChange={(e) => setNewProductForm({...newProductForm, isVisible: e.target.checked})}
                                                             />
@@ -265,7 +327,7 @@ const Admin = () => {
                                             </div>
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-700 mb-1">Kurzbeschreibung</label>
-                                                <textarea 
+                                                <textarea
                                                     className="w-full text-sm text-gray-700 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none resize-none h-[180px]"
                                                     placeholder="Beschreibungstext für das Produkt..."
                                                     value={newProductForm.shortDescription}
@@ -274,7 +336,7 @@ const Admin = () => {
                                             </div>
                                         </div>
                                         <div className="mt-6 flex justify-end">
-                                            <button 
+                                            <button
                                                 onClick={handleCreateNewProduct}
                                                 className="bg-[#68a49c] hover:bg-[#528a83] text-white px-8 py-2.5 rounded shadow text-sm font-medium transition-transform active:scale-95"
                                             >
@@ -314,43 +376,49 @@ const Admin = () => {
                                                 ) : (
                                                     displayedProducts.map((product) => {
                                                         const isEditing = editingId === product.productId;
-                                                        
+                                                        const subcategory = subcategories.find(s => s.subcategoryId === product.subcategoryId);
+
                                                         return (
                                                             <tr key={product.productId} className="hover:bg-gray-50/50 transition-colors">
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                                     #{product.productId}
                                                                 </td>
-                                                                
+
                                                                 <td className="px-6 py-4">
                                                                     {isEditing ? (
                                                                         <div className="space-y-2">
-                                                                            <input 
-                                                                                type="text" 
+                                                                            <input
+                                                                                type="text"
                                                                                 className="w-full text-sm font-medium text-gray-900 border border-gray-300 rounded px-3 py-1.5 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none"
                                                                                 value={editForm.name || ''}
                                                                                 onChange={(e) => setEditForm({...editForm, name: e.target.value})}
                                                                             />
-                                                                            <select 
+                                                                            <select
                                                                                 className="w-full text-xs text-gray-500 border border-gray-300 rounded px-2 py-1 outline-none focus:border-[#68a49c]"
-                                                                                value={editForm.categoryId || 1}
-                                                                                onChange={(e) => setEditForm({...editForm, categoryId: parseInt(e.target.value)})}
+                                                                                value={editForm.subcategoryId ?? ''}
+                                                                                onChange={(e) => setEditForm({...editForm, subcategoryId: parseInt(e.target.value)})}
                                                                             >
-                                                                                {Object.entries(CATEGORIES).map(([id, name]) => (
-                                                                                    <option key={id} value={id}>{name}</option>
+                                                                                <option value="" disabled>Bitte wählen...</option>
+                                                                                {categories.map((c) => (
+                                                                                    <optgroup key={c.categoryId} label={categoryLabel(c)}>
+                                                                                        {c.subcategories.map((s) => (
+                                                                                            <option key={s.subcategoryId} value={s.subcategoryId}>{categoryLabel(s)}</option>
+                                                                                        ))}
+                                                                                    </optgroup>
                                                                                 ))}
                                                                             </select>
                                                                         </div>
                                                                     ) : (
                                                                         <div>
                                                                             <div className="text-sm font-bold text-gray-900">{product.name}</div>
-                                                                            <div className="text-xs text-gray-500 mt-1">{CATEGORIES[product.categoryId] || 'Unbekannt'}</div>
+                                                                            <div className="text-xs text-gray-500 mt-1">{subcategory ? categoryLabel(subcategory) : 'Unbekannt'}</div>
                                                                         </div>
                                                                     )}
                                                                 </td>
 
                                                                 <td className="px-6 py-4">
                                                                     {isEditing ? (
-                                                                        <textarea 
+                                                                        <textarea
                                                                             className="w-full text-sm text-gray-700 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none resize-y min-h-[60px]"
                                                                             value={editForm.shortDescription || ''}
                                                                             onChange={(e) => setEditForm({...editForm, shortDescription: e.target.value})}
@@ -366,8 +434,8 @@ const Admin = () => {
                                                                     {isEditing ? (
                                                                         <div className="relative">
                                                                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">€</span>
-                                                                            <input 
-                                                                                type="number" 
+                                                                            <input
+                                                                                type="number"
                                                                                 step="0.01"
                                                                                 className="w-24 pl-7 pr-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none"
                                                                                 value={editForm.price || 0}
@@ -384,9 +452,9 @@ const Admin = () => {
                                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                                     {isEditing ? (
                                                                         <label className="relative inline-flex items-center cursor-pointer">
-                                                                            <input 
-                                                                                type="checkbox" 
-                                                                                className="sr-only peer" 
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                className="sr-only peer"
                                                                                 checked={editForm.isVisible}
                                                                                 onChange={(e) => setEditForm({...editForm, isVisible: e.target.checked})}
                                                                             />
@@ -402,14 +470,14 @@ const Admin = () => {
                                                                 <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                                     {isEditing ? (
                                                                         <div className="flex justify-end gap-2">
-                                                                            <button 
+                                                                            <button
                                                                                 onClick={() => handleSave(product.productId)}
                                                                                 className="text-white bg-[#68a49c] hover:bg-[#528a83] p-1.5 rounded"
                                                                                 title="Speichern"
                                                                             >
                                                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                                                             </button>
-                                                                            <button 
+                                                                            <button
                                                                                 onClick={handleCancelEdit}
                                                                                 className="text-gray-600 bg-gray-100 hover:bg-gray-200 p-1.5 rounded"
                                                                                 title="Abbrechen"
@@ -418,13 +486,22 @@ const Admin = () => {
                                                                             </button>
                                                                         </div>
                                                                     ) : (
-                                                                        <button 
-                                                                            onClick={() => handleEditClick(product)}
-                                                                            className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 ml-auto"
-                                                                        >
-                                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                                                            Bearbeiten
-                                                                        </button>
+                                                                        <div className="flex justify-end gap-3">
+                                                                            <button
+                                                                                onClick={() => handleEditClick(product)}
+                                                                                className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1"
+                                                                            >
+                                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                                                Bearbeiten
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => handleDelete(product.productId)}
+                                                                                className="text-red-600 hover:text-red-900 flex items-center gap-1"
+                                                                            >
+                                                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                                                Löschen
+                                                                            </button>
+                                                                        </div>
                                                                     )}
                                                                 </td>
                                                             </tr>

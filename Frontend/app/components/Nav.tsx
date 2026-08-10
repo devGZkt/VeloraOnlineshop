@@ -144,6 +144,15 @@ const Nav = () => {
                       >
                         My Orders
                       </Link>
+                      {user.isAdmin && (
+                        <Link
+                          to="/admin"
+                          onClick={() => setIsUserMenuOpen(false)}
+                          className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
+                        >
+                          Admin
+                        </Link>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="text-left px-5 py-2.5 text-sm font-medium text-[#c85a5a] hover:bg-[#f2f4f3] transition-colors"
