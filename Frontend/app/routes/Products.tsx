@@ -1,6 +1,7 @@
 import Nav from "../components/Nav"
 import { useState, useEffect, useMemo } from "react"
 import { useSearchParams, Link } from "react-router"
+import { useTranslation } from "react-i18next"
 import axios from "axios"
 import { useCart } from "../context/CartContext"
 
@@ -30,6 +31,7 @@ interface Product {
 }
 
 const Products = () => {
+  const { t } = useTranslation();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,7 +84,7 @@ const Products = () => {
         setProducts(response.data);
         setError(null);
       } catch (err) {
-        setError("Failed to load products.");
+        setError(t('products.loadError'));
         console.error(err);
       } finally {
         setLoading(false);
@@ -113,7 +115,7 @@ const Products = () => {
             <aside className="w-full md:w-64 flex-shrink-0">
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-24">
                 <h2 className="text-lg f flexont-bold text-gray-900 mb-4 border-b pb-2">
-                  Subcategories
+                  {t('products.subcategories')}
                 </h2>
                 <ul className="space-y-2">
                   <li>
@@ -121,7 +123,7 @@ const Products = () => {
                       to={`/products?category=${categorySlug}`}
                       className={`block px-3 py-2 rounded-lg transition-colors ${!subcategorySlug ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-600 hover:bg-gray-50'}`}
                     >
-                      All {formatSlug(categorySlug || "")}
+                      {t('products.allOf', { category: formatSlug(categorySlug || "") })}
                     </Link>
                   </li>
                   {activeCategory.subcategories.map(sub => (
@@ -143,11 +145,11 @@ const Products = () => {
           <main className="grow">
             <div className="flex justify-between items-center mb-10">
               <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
-                {subcategorySlug ? formatSlug(subcategorySlug) : (activeCategory ? formatSlug(activeCategory.slug) : "All Products")}
+                {subcategorySlug ? formatSlug(subcategorySlug) : (activeCategory ? formatSlug(activeCategory.slug) : t('products.allProducts'))}
               </h1>
               {activeCategory && (
                 <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  {products.length} Products
+                  {t('products.productsCount', { count: products.length })}
                 </span>
               )}
             </div>
@@ -173,13 +175,13 @@ const Products = () => {
                         <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                       </div>
                       {!product.isVisible && (
-                        <span className="absolute top-2 right-2 bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">Not Visible</span>
+                        <span className="absolute top-2 right-2 bg-red-100 text-red-800 text-xs font-semibold px-2.5 py-0.5 rounded">{t('products.notVisible')}</span>
                       )}
                     </div>
                     <div className="p-6 flex flex-col grow">
                       <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{product.name}</h2>
                       <p className="text-gray-500 mb-4 text-sm grow line-clamp-3">
-                        {product.shortDescription || "No description available."}
+                        {product.shortDescription || t('products.noDescription')}
                       </p>
                       <div className="flex justify-between items-end mt-auto pt-4 border-t border-gray-100">
                         <span className="text-2xl font-black text-gray-900">
@@ -197,14 +199,14 @@ const Products = () => {
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                               </svg>
-                              Added!
+                              {t('products.added')}
                             </>
                           ) : (
                             <>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                               </svg>
-                              Buy
+                              {t('products.buy')}
                             </>
                           )}
                         </button>
@@ -214,8 +216,8 @@ const Products = () => {
                 ))}
                 {products.length === 0 && (
                   <div className="col-span-full bg-white p-10 rounded-2xl shadow-sm text-center border border-gray-100">
-                    <h3 className="text-xl font-bold text-gray-700 mb-2">No Products Found</h3>
-                    <p className="text-gray-500">We couldn't find any products in this category. Please check back later.</p>
+                    <h3 className="text-xl font-bold text-gray-700 mb-2">{t('products.noProductsFound')}</h3>
+                    <p className="text-gray-500">{t('products.noProductsFoundText')}</p>
                   </div>
                 )}
               </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 import axios from "axios";
@@ -6,6 +7,7 @@ import axios from "axios";
 const MESSAGE_MIN_LENGTH = 180;
 
 const Contact = () => {
+  const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -19,17 +21,17 @@ const Contact = () => {
     setSuccess(false);
 
     if (!name.trim() || !email.trim() || !message.trim()) {
-      setError("Please fill out all fields.");
+      setError(t('contact.errorRequired'));
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email address.");
+      setError(t('contact.errorEmail'));
       return;
     }
 
     if (message.trim().length < MESSAGE_MIN_LENGTH) {
-      setError(`Your message must be at least ${MESSAGE_MIN_LENGTH} characters long.`);
+      setError(t('contact.errorMessageLength', { min: MESSAGE_MIN_LENGTH }));
       return;
     }
 
@@ -47,8 +49,8 @@ const Contact = () => {
       setMessage('');
       setSuccess(true);
     } catch (err: any) {
-      const msg = err.response?.data?.message || err.response?.data || "Something went wrong. Please try again later.";
-      setError(typeof msg === "string" ? msg : "Something went wrong. Please try again later.");
+      const msg = err.response?.data?.message || err.response?.data || t('contact.errorGeneric');
+      setError(typeof msg === "string" ? msg : t('contact.errorGeneric'));
     } finally {
       setIsSubmitting(false);
     }
@@ -63,16 +65,15 @@ const Contact = () => {
         {/* Contact & Email Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-serif text-[#3e564c] mb-6">
-            Contact Velora<span className="text-[#68a49c]">.</span>
+            {t('contact.title')}<span className="text-[#68a49c]">.</span>
           </h1>
           <p className="text-lg text-[#8c9490] leading-relaxed mb-10 max-w-2xl mx-auto">
-            Crafting timeless pieces for the modern home, inspired by nature's elegance.
-            We believe that everyday spaces should bring peace and harmony to your life.
+            {t('contact.intro')}
           </p>
 
           <div className="inline-block border-t border-[#e2e8e4] pt-8">
             <h2 className="text-sm tracking-widest uppercase text-[#68a49c] font-medium mb-3">
-              Get in Touch
+              {t('contact.getInTouch')}
             </h2>
             <a
               href="mailto:hello@velora.com"
@@ -93,13 +94,13 @@ const Contact = () => {
 
           {success && (
             <div className="mb-6 p-3 rounded-sm bg-green-50 border border-green-200 text-green-700 text-sm text-center">
-              Thank you for reaching out. We'll get back to you soon.
+              {t('contact.thankYou')}
             </div>
           )}
 
           <div className="mb-6">
             <label htmlFor="name" className="block text-sm tracking-widest uppercase text-[#2a3731] mb-2">
-              Name
+              {t('contact.name')}
             </label>
             <input
               type="text"
@@ -107,13 +108,13 @@ const Contact = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-white border border-[#e2e8e4] text-[#2a3731] px-4 py-3 focus:outline-none focus:border-[#68a49c] focus:ring-1 focus:ring-[#68a49c] transition-colors rounded-sm"
-              placeholder="Your Name"
+              placeholder={t('contact.namePlaceholder')}
             />
           </div>
 
           <div className="mb-6">
             <label htmlFor="email" className="block text-sm tracking-widest uppercase text-[#2a3731] mb-2">
-              Email Address
+              {t('contact.email')}
             </label>
             <input
               type="email"
@@ -121,13 +122,13 @@ const Contact = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white border border-[#e2e8e4] text-[#2a3731] px-4 py-3 focus:outline-none focus:border-[#68a49c] focus:ring-1 focus:ring-[#68a49c] transition-colors rounded-sm"
-              placeholder="you@example.com"
+              placeholder={t('contact.emailPlaceholder')}
             />
           </div>
 
           <div className="mb-8">
             <label htmlFor="message" className="block text-sm tracking-widest uppercase text-[#2a3731] mb-2">
-              Message
+              {t('contact.message')}
             </label>
             <textarea
               id="message"
@@ -135,9 +136,9 @@ const Contact = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="w-full bg-white border border-[#e2e8e4] text-[#2a3731] px-4 py-3 focus:outline-none focus:border-[#68a49c] focus:ring-1 focus:ring-[#68a49c] transition-colors rounded-sm resize-none"
-              placeholder="How can we help you?"
+              placeholder={t('contact.messagePlaceholder')}
             ></textarea>
-            <p className="mt-2 text-xs text-[#8c9490]">{message.trim().length}/{MESSAGE_MIN_LENGTH} characters minimum</p>
+            <p className="mt-2 text-xs text-[#8c9490]">{t('contact.charactersMinimum', { count: message.trim().length, min: MESSAGE_MIN_LENGTH })}</p>
           </div>
 
           <button
@@ -145,7 +146,7 @@ const Contact = () => {
             disabled={isSubmitting}
             className="w-full bg-[#3e564c] text-white uppercase tracking-widest text-sm py-4 rounded-sm hover:bg-[#2a3731] disabled:opacity-50 transition-colors duration-300"
           >
-            {isSubmitting ? "Sending..." : "Send Message"}
+            {isSubmitting ? t('contact.sending') : t('contact.send')}
           </button>
         </form>
 

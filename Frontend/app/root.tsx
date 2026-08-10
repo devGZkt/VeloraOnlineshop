@@ -5,10 +5,20 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteLoaderData,
 } from "react-router";
+import { I18nextProvider } from "react-i18next";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import i18n, { DEFAULT_LANGUAGE } from "./i18n/i18n";
+import { resolveLanguage } from "./i18n/language.server";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const lang = resolveLanguage(request);
+  await i18n.changeLanguage(lang);
+  return { lang };
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -24,8 +34,19 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const rootData = useRouteLoaderData<typeof loader>("root");
+  const lang = rootData?.lang ?? DEFAULT_LANGUAGE;
+
+  // Applied synchronously during render (not in an effect) so the very
+  // first client render already matches the language the server used —
+  // an effect would run after hydration and cause a visible flash plus
+  // a hydration mismatch, same class of bug as the cart-badge issue.
+  if (i18n.language !== lang) {
+    i18n.changeLanguage(lang);
+  }
+
   return (
-    <html lang="en">
+    <html lang={lang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -33,7 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        {children}
+        <I18nextProvider i18n={i18n}>{children}</I18nextProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

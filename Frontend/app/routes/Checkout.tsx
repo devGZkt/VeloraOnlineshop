@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import { useCart } from "../context/CartContext";
 import Nav from "../components/Nav";
 
 const Checkout = () => {
+  const { t } = useTranslation();
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
 
   // Shipping form state
@@ -53,8 +55,8 @@ const Checkout = () => {
           const errorMsg =
             err.response?.data?.message ||
             err.response?.data ||
-            "Zahlung konnte von Stripe nicht verifiziert werden. Es wurde keine Bestellung angelegt.";
-          setPaymentError(typeof errorMsg === "string" ? errorMsg : "Zahlungsüberprüfung fehlgeschlagen.");
+            t('checkout.verifyError');
+          setPaymentError(typeof errorMsg === "string" ? errorMsg : t('checkout.verifyErrorGeneric'));
         })
         .finally(() => {
           setIsVerifying(false);
@@ -95,13 +97,13 @@ const Checkout = () => {
         // Redirect to Stripe Checkout page
         window.location.href = response.data.url;
       } else {
-        setPaymentError("Fehler beim Erstellen der Stripe-Zahlungssitzung.");
+        setPaymentError(t('checkout.sessionCreateError'));
         setIsSubmitting(false);
       }
     } catch (err: any) {
       console.error("Stripe Checkout error:", err);
-      const msg = err.response?.data?.error || err.response?.data || "Verbindung zum Zahlungsanbieter fehlgeschlagen.";
-      setPaymentError(typeof msg === "string" ? msg : "Fehler bei der Zahlungsabwicklung.");
+      const msg = err.response?.data?.error || err.response?.data || t('checkout.connectionError');
+      setPaymentError(typeof msg === "string" ? msg : t('checkout.connectionErrorGeneric'));
       setIsSubmitting(false);
     }
   };
@@ -114,8 +116,8 @@ const Checkout = () => {
         <div className="max-w-3xl mx-auto px-4 py-20 sm:px-6 lg:px-8 mt-12 text-center">
           <div className="bg-white p-12 rounded-2xl shadow-sm border border-[#e2e8e4]">
             <div className="w-16 h-16 border-4 border-[#3e564c] border-t-transparent rounded-full animate-spin mx-auto mb-6"></div>
-            <h2 className="text-2xl font-serif text-[#2a3731] mb-2">Zahlung wird verifiziert...</h2>
-            <p className="text-[#8c9490]">Wir überprüfen deine Stripe-Zahlung und erstellen deine Bestellung.</p>
+            <h2 className="text-2xl font-serif text-[#2a3731] mb-2">{t('checkout.verifying')}</h2>
+            <p className="text-[#8c9490]">{t('checkout.verifyingText')}</p>
           </div>
         </div>
       </div>
@@ -134,18 +136,18 @@ const Checkout = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h2 className="text-3xl font-serif text-[#2a3731] mb-2">Zahlung erfolgreich!</h2>
+            <h2 className="text-3xl font-serif text-[#2a3731] mb-2">{t('checkout.paymentSuccess')}</h2>
             <p className="text-[#3e564c] font-medium text-lg mb-4">
-              Bestellung #{confirmedOrderId} wurde erfolgreich in der Datenbank angelegt.
+              {t('checkout.orderNumber', { id: confirmedOrderId })}
             </p>
             <p className="text-[#8c9490] mb-8">
-              Vielen Dank für deine Bestellung bei Velora. Eine Bestätigung wird in Kürze versandt.
+              {t('checkout.thankYouMessage')}
             </p>
             <Link
               to="/products"
               className="inline-block bg-[#3e564c] text-white px-8 py-3 rounded hover:bg-[#2a3731] transition duration-300 font-medium tracking-wide uppercase text-sm"
             >
-              Weiter shoppen
+              {t('checkout.continueShopping')}
             </Link>
           </div>
         </div>
@@ -158,7 +160,7 @@ const Checkout = () => {
       <Nav />
 
       <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-serif text-[#3e564c] mb-8">Kasse (Checkout)</h1>
+        <h1 className="text-4xl font-serif text-[#3e564c] mb-8">{t('checkout.title')}</h1>
 
         {/* Notifications / Alerts */}
         {paymentError && (
@@ -167,7 +169,7 @@ const Checkout = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="font-semibold">Zahlungsfehler / Abbruch</p>
+              <p className="font-semibold">{t('checkout.paymentErrorTitle')}</p>
               <p className="text-sm">{paymentError}</p>
             </div>
           </div>
@@ -179,8 +181,8 @@ const Checkout = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="font-semibold">Zahlung abgebrochen</p>
-              <p className="text-sm">Die Stripe-Zahlung wurde abgebrochen. Es wurde keine Bestellung in der Datenbank erstellt.</p>
+              <p className="font-semibold">{t('checkout.canceledTitle')}</p>
+              <p className="text-sm">{t('checkout.canceledText')}</p>
             </div>
           </div>
         )}
@@ -190,10 +192,10 @@ const Checkout = () => {
             <svg className="w-16 h-16 text-[#8c9490] mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
-            <h2 className="text-2xl font-medium text-[#2a3731] mb-2">Dein Warenkorb ist leer</h2>
-            <p className="text-[#8c9490] mb-8">Du hast noch keine Produkte zum Warenkorb hinzugefügt.</p>
+            <h2 className="text-2xl font-medium text-[#2a3731] mb-2">{t('checkout.emptyCart')}</h2>
+            <p className="text-[#8c9490] mb-8">{t('checkout.emptyCartText')}</p>
             <Link to="/products" className="inline-block bg-[#68a49c] text-white px-8 py-3 rounded hover:bg-[#4a857d] transition duration-300 font-medium tracking-wide uppercase text-sm">
-              Produkte ansehen
+              {t('checkout.viewProducts')}
             </Link>
           </div>
         ) : (
@@ -202,7 +204,7 @@ const Checkout = () => {
             <div className="lg:col-span-7 space-y-6">
               {/* Order Items */}
               <div className="bg-white rounded-2xl shadow-sm border border-[#e2e8e4] p-6 sm:p-8">
-                <h2 className="text-xl font-medium text-[#2a3731] mb-6">Warenkorb Artikel</h2>
+                <h2 className="text-xl font-medium text-[#2a3731] mb-6">{t('checkout.orderItems')}</h2>
                 <ul className="divide-y divide-[#e2e8e4]">
                   {cart?.map((item: any, index: number) => (
                     <li key={item.id || item.productId || index} className="py-6 flex items-center">
@@ -217,7 +219,7 @@ const Checkout = () => {
                       </div>
                       <div className="ml-6 flex-1 flex flex-col justify-center">
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-medium text-[#2a3731]">{item.name || "Produkt"}</h3>
+                          <h3 className="text-lg font-medium text-[#2a3731]">{item.name || t('checkout.product')}</h3>
                           <p className="text-lg font-medium text-[#2a3731]">€{((item.price || 0) * (item.quantity || 1)).toFixed(2)}</p>
                         </div>
                         <div className="flex items-center justify-between mt-3">
@@ -226,7 +228,7 @@ const Checkout = () => {
                               type="button"
                               onClick={() => updateQuantity(item.id || item.productId, (item.quantity || 1) - 1)}
                               className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-200 rounded font-bold transition-colors"
-                              aria-label="Decrease quantity"
+                              aria-label={t('checkout.decreaseQuantity')}
                             >
                               -
                             </button>
@@ -235,7 +237,7 @@ const Checkout = () => {
                               type="button"
                               onClick={() => updateQuantity(item.id || item.productId, (item.quantity || 1) + 1)}
                               className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-200 rounded font-bold transition-colors"
-                              aria-label="Increase quantity"
+                              aria-label={t('checkout.increaseQuantity')}
                             >
                               +
                             </button>
@@ -245,7 +247,7 @@ const Checkout = () => {
                             className="text-sm text-[#c85a5a] hover:text-red-700 font-medium transition-colors cursor-pointer"
                             onClick={() => removeFromCart(item.id || item.productId)}
                           >
-                            Entfernen
+                            {t('checkout.remove')}
                           </button>
                         </div>
                       </div>
@@ -256,10 +258,10 @@ const Checkout = () => {
 
               {/* Shipping Details */}
               <div className="bg-white rounded-2xl shadow-sm border border-[#e2e8e4] p-6 sm:p-8">
-                <h2 className="text-xl font-medium text-[#2a3731] mb-6">Lieferadresse</h2>
+                <h2 className="text-xl font-medium text-[#2a3731] mb-6">{t('checkout.shippingDetails')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">E-Mail-Adresse *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.emailAddress')}</label>
                     <input
                       type="email"
                       required
@@ -270,7 +272,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">Vorname *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.firstName')}</label>
                     <input
                       type="text"
                       required
@@ -281,7 +283,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">Nachname *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.lastName')}</label>
                     <input
                       type="text"
                       required
@@ -292,7 +294,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">Strasse *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.street')}</label>
                     <input
                       type="text"
                       required
@@ -303,7 +305,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">Hausnummer *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.houseNr')}</label>
                     <input
                       type="text"
                       required
@@ -314,7 +316,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">PLZ *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.zipCode')}</label>
                     <input
                       type="text"
                       required
@@ -325,7 +327,7 @@ const Checkout = () => {
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <label className="block text-sm font-medium text-[#3e564c] mb-1">Stadt / Ort *</label>
+                    <label className="block text-sm font-medium text-[#3e564c] mb-1">{t('checkout.city')}</label>
                     <input
                       type="text"
                       required
@@ -342,18 +344,18 @@ const Checkout = () => {
             {/* Right Column: Order Summary Sidebar */}
             <div className="lg:col-span-5 relative">
               <div className="bg-white rounded-2xl shadow-sm border border-[#e2e8e4] p-6 sm:p-8 sticky top-28">
-                <h2 className="text-xl font-medium text-[#2a3731] mb-6">Bestellübersicht</h2>
+                <h2 className="text-xl font-medium text-[#2a3731] mb-6">{t('checkout.orderSummary')}</h2>
                 <dl className="space-y-4 text-sm text-[#333e38]">
                   <div className="flex justify-between">
-                    <dt>Zwischensumme</dt>
+                    <dt>{t('checkout.subtotal')}</dt>
                     <dd className="font-medium">€{subtotal.toFixed(2)}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt>Versandkosten</dt>
+                    <dt>{t('checkout.shipping')}</dt>
                     <dd className="font-medium">€{shipping.toFixed(2)}</dd>
                   </div>
                   <div className="flex justify-between border-t border-[#e2e8e4] pt-4 mt-4 text-base font-semibold text-[#2a3731]">
-                    <dt>Gesamtsumme</dt>
+                    <dt>{t('checkout.total')}</dt>
                     <dd>€{total.toFixed(2)}</dd>
                   </div>
                 </dl>
@@ -366,11 +368,11 @@ const Checkout = () => {
                   {isSubmitting ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Verbinde zu Stripe...</span>
+                      <span>{t('checkout.connecting')}</span>
                     </>
                   ) : (
                     <>
-                      <span>Mit Stripe bezahlen</span>
+                      <span>{t('checkout.payWithStripe')}</span>
                       <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                       </svg>
@@ -382,7 +384,7 @@ const Checkout = () => {
                   <svg className="w-4 h-4 text-[#68a49c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 15v2m-6 4h12a2 2 0 00-2-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                   </svg>
-                  Sichere Zahlung &amp; Datenübertragung via Stripe
+                  {t('checkout.secureNote')}
                 </div>
               </div>
             </div>

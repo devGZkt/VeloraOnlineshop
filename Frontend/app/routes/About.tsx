@@ -1,7 +1,9 @@
+import { useTranslation } from "react-i18next";
 import Nav from "../components/Nav";
 import Footer from "../components/Footer";
 
 const About = () => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-white font-sans text-[#333e38]">
       <Nav />
@@ -10,10 +12,10 @@ const About = () => {
       <header className="bg-[#f2f4f3] py-20 px-4 sm:px-6 lg:px-8 text-center border-b border-[#e2e8e4]">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl md:text-5xl font-serif text-[#3e564c] mb-6">
-            About Velora<span className="text-[#68a49c]">.</span>
+            {t('about.heroTitle')}<span className="text-[#68a49c]">.</span>
           </h1>
           <p className="text-lg text-[#8c9490] leading-relaxed">
-            Crafting timeless pieces for the modern home, inspired by nature's elegance. We believe that everyday spaces should bring peace and harmony to your life.
+            {t('about.heroSubtitle')}
           </p>
         </div>
       </header>
@@ -41,23 +43,23 @@ const About = () => {
           {/* Text Content */}
           <div className="w-full md:w-1/2 space-y-6">
             <h2 className="text-sm tracking-widest uppercase text-[#68a49c] font-medium">
-              Our Story
+              {t('about.ourStory')}
             </h2>
             <h3 className="text-3xl md:text-4xl font-serif text-[#3e564c]">
-              Rooted in simplicity and mindful design.
+              {t('about.storyTitle')}
             </h3>
             <p className="text-[#2a3731] leading-relaxed">
-              Founded on the principles of sustainable living, Velora started as a small passion project. We noticed a gap between beautiful aesthetics and ethical craftsmanship, and we set out to bridge it.
+              {t('about.storyPara1')}
             </p>
             <p className="text-[#8c9490] leading-relaxed">
-              Today, we partner with artisans worldwide to bring you curated collections that celebrate both modern functionality and the quiet beauty of natural, long-lasting materials.
+              {t('about.storyPara2')}
             </p>
           </div>
         </section>
 
         {/* Core Values Section */}
         <section className="text-center">
-          <h2 className="text-3xl font-serif text-[#3e564c] mb-12">Our Core Values</h2>
+          <h2 className="text-3xl font-serif text-[#3e564c] mb-12">{t('about.coreValues')}</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Value 1 */}
@@ -67,9 +69,9 @@ const About = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
                 </svg>
               </div>
-              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">Sustainability</h3>
+              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">{t('about.sustainabilityTitle')}</h3>
               <p className="text-[#8c9490] text-sm leading-relaxed">
-                We prioritize eco-friendly materials and ethical manufacturing processes in everything we create.
+                {t('about.sustainabilityText')}
               </p>
             </div>
 
@@ -80,9 +82,9 @@ const About = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.828M11.42 15.17l-3.96-3.96a3 3 0 010-4.242l1.414-1.414a3 3 0 014.242 0l3.96 3.96M11.42 15.17l-.707.707M17.25 21l-3.535-3.536M15.17 11.42l-.707.707M11.42 15.17l-.707.707" />
                 </svg>
               </div>
-              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">Craftsmanship</h3>
+              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">{t('about.craftsmanshipTitle')}</h3>
               <p className="text-[#8c9490] text-sm leading-relaxed">
-                Every piece is thoughtfully designed and meticulously crafted to last a lifetime, honoring traditional techniques.
+                {t('about.craftsmanshipText')}
               </p>
             </div>
 
@@ -93,9 +95,9 @@ const About = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
                 </svg>
               </div>
-              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">Simplicity</h3>
+              <h3 className="text-sm tracking-widest uppercase text-[#2a3731] font-medium mb-3">{t('about.simplicityTitle')}</h3>
               <p className="text-[#8c9490] text-sm leading-relaxed">
-                We believe in the power of minimalism, creating spaces and designs that are both highly functional and beautiful.
+                {t('about.simplicityText')}
               </p>
             </div>
           </div>

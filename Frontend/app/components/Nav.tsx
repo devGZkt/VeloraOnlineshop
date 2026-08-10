@@ -1,10 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router";
+import { useTranslation } from "react-i18next";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import LanguageSwitcher from "../i18n/LanguageSwitcher";
 
 const Nav = () => {
 
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -32,24 +35,24 @@ const Nav = () => {
   };
 
   const productCategories = [
-    { name: 'Parfüm & Düfte', href: '/products?category=parfuem-duefte' },
-    { name: 'Pflege & Hygiene', href: '/products?category=pflege-hygiene' },
-    { name: 'Gesicht & Haut', href: '/products?category=gesicht-haut' },
-    { name: 'Haar & Bart', href: '/products?category=haar-bart' },
-    { name: 'Make-Up', href: '/products?category=make-up' },
-    { name: 'Öle & Essenzen', href: '/products?category=oele-essenzen' },
-    { name: 'Haushalt & Reinigung', href: '/products?category=haushalt-reinigung' },
-    { name: 'Ernährung & Vitalität', href: '/products?category=ernaehrung-vitalitaet' },
+    { name: t('categories.parfuemDuefte'), href: '/products?category=parfuem-duefte' },
+    { name: t('categories.pflegeHygiene'), href: '/products?category=pflege-hygiene' },
+    { name: t('categories.gesichtHaut'), href: '/products?category=gesicht-haut' },
+    { name: t('categories.haarBart'), href: '/products?category=haar-bart' },
+    { name: t('categories.makeUp'), href: '/products?category=make-up' },
+    { name: t('categories.oeleEssenzen'), href: '/products?category=oele-essenzen' },
+    { name: t('categories.haushaltReinigung'), href: '/products?category=haushalt-reinigung' },
+    { name: t('categories.ernaehrungVitalitaet'), href: '/products?category=ernaehrung-vitalitaet' },
   ];
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Products', href: '/products', isDropdown: true },
-    { name: 'About Us', href: '/about' },
-    { name: 'Contact', href: '/contact' },
+    { name: t('nav.home'), href: '/' },
+    { name: t('nav.products'), href: '/products', isDropdown: true },
+    { name: t('nav.aboutUs'), href: '/about' },
+    { name: t('nav.contact'), href: '/contact' },
   ];
 
-  const activeLink = navLinks.find(link => 
+  const activeLink = navLinks.find(link =>
     link.href === location.pathname || (link.isDropdown && location.pathname === '/products')
   )?.name;
 
@@ -93,7 +96,7 @@ const Nav = () => {
                   <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-64 opacity-0 invisible group-hover/nav:opacity-100 group-hover/nav:visible transition-all duration-300 transform z-50">
                     <div className="bg-white shadow-xl rounded-xl border border-[#e2e8e4] overflow-hidden flex flex-col py-2">
                       <Link to="/products" className="px-5 py-2.5 text-sm font-semibold tracking-wider text-[#2a3731] hover:bg-[#f2f4f3] uppercase border-b border-[#e2e8e4]">
-                        Alle Produkte
+                        {t('nav.allProducts')}
                       </Link>
                       {productCategories.map((cat) => (
                         <Link 
@@ -113,10 +116,11 @@ const Nav = () => {
 
           {/* Right Icons (Desktop) */}
           <div className="hidden md:flex items-center space-x-6 text-[#2a3731]">
+            <LanguageSwitcher />
             <div className="relative" ref={userMenuRef}>
               <button
                 onClick={() => setIsUserMenuOpen((prev) => !prev)}
-                aria-label="User Account"
+                aria-label={t('nav.userAccount')}
                 aria-expanded={isUserMenuOpen}
                 className="flex items-center gap-1 hover:text-[#68a49c] transition-colors"
               >
@@ -142,7 +146,7 @@ const Nav = () => {
                         onClick={() => setIsUserMenuOpen(false)}
                         className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
                       >
-                        My Orders
+                        {t('nav.myOrders')}
                       </Link>
                       {user.isAdmin && (
                         <Link
@@ -150,14 +154,14 @@ const Nav = () => {
                           onClick={() => setIsUserMenuOpen(false)}
                           className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
                         >
-                          Admin
+                          {t('nav.admin')}
                         </Link>
                       )}
                       <button
                         onClick={handleLogout}
                         className="text-left px-5 py-2.5 text-sm font-medium text-[#c85a5a] hover:bg-[#f2f4f3] transition-colors"
                       >
-                        Logout
+                        {t('nav.logout')}
                       </button>
                     </>
                   ) : (
@@ -167,14 +171,14 @@ const Nav = () => {
                         onClick={() => setIsUserMenuOpen(false)}
                         className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
                       >
-                        Sign In
+                        {t('nav.signIn')}
                       </Link>
                       <Link
                         to="/signup"
                         onClick={() => setIsUserMenuOpen(false)}
                         className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
                       >
-                        Sign Up
+                        {t('nav.signUp')}
                       </Link>
                     </>
                   )}
@@ -182,7 +186,7 @@ const Nav = () => {
               </div>
             </div>
             <div className="relative group/cart py-2 flex items-center">
-              <Link to="/checkout" aria-label="Shopping Cart" className="relative block transition-transform group-hover/cart:scale-110">
+              <Link to="/checkout" aria-label={t('nav.cart')} className="relative block transition-transform group-hover/cart:scale-110">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.119-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
@@ -199,12 +203,12 @@ const Nav = () => {
                 <div className="bg-white shadow-xl rounded-xl border border-[#e2e8e4] overflow-hidden">
                   {cart?.length === 0 ? (
                     <div className="p-6 text-center text-[#8c9490] text-sm">
-                      Your cart is empty.
+                      {t('nav.cartEmpty')}
                     </div>
                   ) : (
                     <div className="p-4 flex flex-col gap-4">
                       <div className="text-xs tracking-wider uppercase font-medium text-[#8c9490] border-b border-[#e2e8e4] pb-2">
-                        Recently Added
+                        {t('nav.recentlyAdded')}
                       </div>
 
                       <div className="space-y-3">
@@ -220,7 +224,7 @@ const Nav = () => {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="text-sm font-medium text-[#2a3731] truncate">{item.name || "Unknown Product"}</div>
+                              <div className="text-sm font-medium text-[#2a3731] truncate">{item.name || t('nav.unknownProduct')}</div>
                               <div className="text-xs text-[#8c9490] font-medium">
                                 {item.quantity > 1 ? `${item.quantity} × ` : ""}€{(item.price || 0).toFixed(2)}
                               </div>
@@ -231,12 +235,12 @@ const Nav = () => {
 
                       {cart?.length > 3 && (
                         <div className="text-xs text-center text-[#8c9490] pt-1">
-                          +{cart.length - 3} more items in cart
+                          {t('nav.moreItemsInCart', { count: cart.length - 3 })}
                         </div>
                       )}
 
                       <Link to="/checkout" className="w-full block bg-[#3e564c] text-white py-2.5 rounded hover:bg-[#2a3731] transition duration-300 text-sm font-medium tracking-wide uppercase text-center mt-1">
-                        Go to Checkout
+                        {t('nav.goToCheckout')}
                       </Link>
                     </div>
                   )}
@@ -246,11 +250,12 @@ const Nav = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden flex items-center gap-4">
+            <LanguageSwitcher />
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-[#3e564c] hover:text-[#2a3731] focus:outline-none"
-              aria-label="Toggle Menu"
+              aria-label={t('nav.toggleMenu')}
             >
               <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isOpen ? (
@@ -287,11 +292,11 @@ const Nav = () => {
                       onClick={() => setIsOpen(false)}
                       className="block py-2 text-sm text-[#2a3731] font-medium tracking-wide uppercase"
                     >
-                      Alle Produkte
+                      {t('nav.allProducts')}
                     </Link>
                     {productCategories.map((cat) => (
-                      <Link 
-                        key={cat.name} 
+                      <Link
+                        key={cat.name}
                         to={cat.href}
                         onClick={() => setIsOpen(false)}
                         className="block py-2 text-sm text-[#8c9490] hover:text-[#2a3731] transition-colors"
@@ -323,7 +328,7 @@ const Nav = () => {
             <Link
               to={user ? "/account" : "/signin"}
               onClick={() => setIsOpen(false)}
-              aria-label="User Account"
+              aria-label={t('nav.userAccount')}
               className="hover:text-[#68a49c] transition-colors duration-200"
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -338,10 +343,10 @@ const Nav = () => {
                 }}
                 className="text-sm font-medium text-[#c85a5a] hover:text-red-700 transition-colors"
               >
-                Logout
+                {t('nav.logout')}
               </button>
             )}
-            <Link to="/checkout" aria-label="Shopping Cart" className="relative group">
+            <Link to="/checkout" aria-label={t('nav.cart')} className="relative group">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 transition-transform group-hover:scale-110">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.119-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
               </svg>

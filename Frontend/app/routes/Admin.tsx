@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import Nav from '../components/Nav';
 import { useAuth } from '../context/AuthContext';
 
@@ -42,6 +43,7 @@ const categoryLabel = (c: { description?: string; slug?: string; categoryId?: nu
     c.description || c.slug || `#${c.categoryId ?? c.subcategoryId}`;
 
 const Admin = () => {
+    const { t } = useTranslation();
     const { user, isLoading: authLoading } = useAuth();
     const navigate = useNavigate();
 
@@ -89,7 +91,7 @@ const Admin = () => {
             setProducts(response.data);
             setError(null);
         } catch (err) {
-            setError("Fehler beim Laden der Produkte.");
+            setError(t('admin.errorLoadProducts'));
             console.error(err);
         } finally {
             setLoading(false);
@@ -101,7 +103,7 @@ const Admin = () => {
             const response = await axios.get("/api/Category");
             setCategories(response.data);
         } catch (err) {
-            console.error("Fehler beim Laden der Kategorien:", err);
+            console.error("Failed to load categories:", err);
         }
     };
 
@@ -118,7 +120,7 @@ const Admin = () => {
 
     const handleSave = async (id: number) => {
         if (!editForm.subcategoryId) {
-            alert("Bitte eine Unterkategorie auswählen.");
+            alert(t('admin.errorSelectSubcategory'));
             return;
         }
 
@@ -128,31 +130,31 @@ const Admin = () => {
             setEditingId(null);
             setEditForm({});
         } catch (err) {
-            console.error("Fehler beim Speichern:", err);
-            alert("Fehler beim Speichern der Änderungen.");
+            console.error("Failed to save:", err);
+            alert(t('admin.errorSave'));
         }
     };
 
     const handleDelete = async (id: number) => {
-        if (!confirm("Dieses Produkt wirklich löschen?")) return;
+        if (!confirm(t('admin.deleteConfirm'))) return;
 
         try {
             await axios.delete(`/api/Products/${id}`, { withCredentials: true });
             setProducts(products.filter(p => p.productId !== id));
         } catch (err) {
-            console.error("Fehler beim Löschen:", err);
-            alert("Fehler beim Löschen des Produkts.");
+            console.error("Failed to delete:", err);
+            alert(t('admin.errorDelete'));
         }
     };
 
     const handleCreateNewProduct = async () => {
         if (!newProductForm.name) {
-            alert("Bitte einen Titel eingeben.");
+            alert(t('admin.errorEnterTitle'));
             return;
         }
 
         if (!newProductForm.subcategoryId) {
-            alert("Bitte eine Unterkategorie auswählen.");
+            alert(t('admin.errorSelectSubcategory'));
             return;
         }
 
@@ -162,8 +164,8 @@ const Admin = () => {
             setIsAddingNew(false);
             setNewProductForm(emptyProductForm);
         } catch (err) {
-            console.error("Fehler beim Anlegen:", err);
-            alert("Fehler beim Erstellen des neuen Produkts.");
+            console.error("Failed to create:", err);
+            alert(t('admin.errorCreate'));
         }
     };
 
@@ -179,7 +181,7 @@ const Admin = () => {
             <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
                 <Nav />
                 <div className="flex-1 flex items-center justify-center text-gray-500">
-                    {authLoading ? "Lädt..." : "Zugriff verweigert."}
+                    {authLoading ? t('admin.loading') : t('admin.accessDenied')}
                 </div>
             </div>
         );
@@ -193,19 +195,19 @@ const Admin = () => {
                 {/* Sidebar */}
                 <aside className="w-64 bg-white border-r border-gray-200 shadow-sm hidden md:block">
                     <div className="p-6">
-                        <h2 className="text-xl font-serif font-bold text-[#2a3731] mb-6">Velora Admin</h2>
+                        <h2 className="text-xl font-serif font-bold text-[#2a3731] mb-6">{t('admin.title')}</h2>
                         <nav className="space-y-2">
                             <button
                                 onClick={() => setActiveTab('products')}
                                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'products' ? 'bg-[#68a49c] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}
                             >
-                                Produkte
+                                {t('admin.products')}
                             </button>
                             <button
                                 onClick={() => setActiveTab('categories')}
                                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === 'categories' ? 'bg-[#68a49c] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'}`}
                             >
-                                Kategorien
+                                {t('admin.categories')}
                             </button>
                         </nav>
                     </div>
@@ -217,18 +219,18 @@ const Admin = () => {
                         <div className="flex justify-between items-end mb-8">
                             <div>
                                 <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                                    {activeTab === 'products' ? 'Produkte Verwalten' : 'Kategorien Verwalten'}
+                                    {activeTab === 'products' ? t('admin.manageProducts') : t('admin.manageCategories')}
                                 </h1>
 
                                 {activeTab === 'products' && (
                                     <div className="flex items-center gap-3">
-                                        <label className="text-sm font-medium text-gray-600">Filter:</label>
+                                        <label className="text-sm font-medium text-gray-600">{t('admin.filter')}</label>
                                         <select
                                             className="bg-white border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-[#68a49c] focus:border-[#68a49c] block px-3 py-2 shadow-sm outline-none"
                                             value={selectedCategoryFilter}
                                             onChange={(e) => setSelectedCategoryFilter(e.target.value === 'ALL' ? 'ALL' : Number(e.target.value))}
                                         >
-                                            <option value="ALL">Alle Kategorien</option>
+                                            <option value="ALL">{t('admin.allCategories')}</option>
                                             {categories.map((c) => (
                                                 <option key={c.categoryId} value={c.categoryId}>{categoryLabel(c)}</option>
                                             ))}
@@ -248,12 +250,12 @@ const Admin = () => {
                                     {isAddingNew ? (
                                         <>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                                            Abbrechen
+                                            {t('admin.cancel')}
                                         </>
                                     ) : (
                                         <>
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                            Neues Produkt
+                                            {t('admin.newProduct')}
                                         </>
                                     )}
                                 </button>
@@ -270,27 +272,27 @@ const Admin = () => {
                             <>
                                 {isAddingNew && (
                                     <div className="bg-white rounded-xl shadow-lg border border-[#e2e8e4] p-6 mb-8 transform transition-all duration-300 animate-fade-in-up">
-                                        <h3 className="text-xl font-serif text-[#2a3731] mb-5 border-b pb-3">Neues Produkt anlegen</h3>
+                                        <h3 className="text-xl font-serif text-[#2a3731] mb-5 border-b pb-3">{t('admin.createNewProduct')}</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-4">
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Titel</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.titleField')}</label>
                                                     <input
                                                         type="text"
-                                                        placeholder="z.B. Aqua de Parfum"
+                                                        placeholder={t('admin.titlePlaceholder')}
                                                         className="w-full text-smborder border-gray-300 rounded px-3 py-2.5 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none"
                                                         value={newProductForm.name}
                                                         onChange={(e) => setNewProductForm({...newProductForm, name: e.target.value})}
                                                     />
                                                 </div>
                                                 <div>
-                                                    <label className="block text-sm font-medium text-gray-700 mb-1">Unterkategorie</label>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.subcategory')}</label>
                                                     <select
                                                         className="w-full text-sm border border-gray-300 rounded px-3 py-2.5 outline-none focus:ring-2 focus:ring-[#68a49c]"
                                                         value={newProductForm.subcategoryId ?? ''}
                                                         onChange={(e) => setNewProductForm({...newProductForm, subcategoryId: parseInt(e.target.value)})}
                                                     >
-                                                        <option value="" disabled>Bitte wählen...</option>
+                                                        <option value="" disabled>{t('admin.pleaseSelect')}</option>
                                                         {categories.map((c) => (
                                                             <optgroup key={c.categoryId} label={categoryLabel(c)}>
                                                                 {c.subcategories.map((s) => (
@@ -302,7 +304,7 @@ const Admin = () => {
                                                 </div>
                                                 <div className="flex items-center gap-6 pt-2">
                                                     <div className="flex-1">
-                                                        <label className="block text-sm font-medium text-gray-700 mb-1">Preis (€)</label>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.price')}</label>
                                                         <input
                                                             type="number"
                                                             step="0.01"
@@ -313,7 +315,7 @@ const Admin = () => {
                                                     </div>
                                                     <div className="flex-1 pt-6 text-center">
                                                         <label className="inline-flex items-center cursor-pointer">
-                                                            <span className="mr-3 text-sm font-medium text-gray-700">{newProductForm.isVisible ? 'Sichtbar (Aktiv)' : 'Versteckt (Inaktiv)'}</span>
+                                                            <span className="mr-3 text-sm font-medium text-gray-700">{newProductForm.isVisible ? t('admin.visibleActive') : t('admin.hiddenInactive')}</span>
                                                             <input
                                                                 type="checkbox"
                                                                 className="sr-only peer"
@@ -326,10 +328,10 @@ const Admin = () => {
                                                 </div>
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-1">Kurzbeschreibung</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-1">{t('admin.shortDescription')}</label>
                                                 <textarea
                                                     className="w-full text-sm text-gray-700 border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-[#68a49c] focus:border-transparent outline-none resize-none h-[180px]"
-                                                    placeholder="Beschreibungstext für das Produkt..."
+                                                    placeholder={t('admin.shortDescriptionPlaceholder')}
                                                     value={newProductForm.shortDescription}
                                                     onChange={(e) => setNewProductForm({...newProductForm, shortDescription: e.target.value})}
                                                 />
@@ -340,7 +342,7 @@ const Admin = () => {
                                                 onClick={handleCreateNewProduct}
                                                 className="bg-[#68a49c] hover:bg-[#528a83] text-white px-8 py-2.5 rounded shadow text-sm font-medium transition-transform active:scale-95"
                                             >
-                                                Produkt Speichern
+                                                {t('admin.saveProduct')}
                                             </button>
                                         </div>
                                     </div>
@@ -351,12 +353,12 @@ const Admin = () => {
                                         <table className="w-full text-left border-collapse">
                                             <thead>
                                                 <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider font-semibold border-b border-gray-200">
-                                                    <th className="px-6 py-4">ID</th>
-                                                    <th className="px-6 py-4">Titel & Kategorie</th>
-                                                    <th className="px-6 py-4">Beschreibung</th>
-                                                    <th className="px-6 py-4">Preis (€)</th>
-                                                    <th className="px-6 py-4">Status</th>
-                                                    <th className="px-6 py-4 text-right">Aktionen</th>
+                                                    <th className="px-6 py-4">{t('admin.id')}</th>
+                                                    <th className="px-6 py-4">{t('admin.titleAndCategory')}</th>
+                                                    <th className="px-6 py-4">{t('admin.description')}</th>
+                                                    <th className="px-6 py-4">{t('admin.priceColumn')}</th>
+                                                    <th className="px-6 py-4">{t('admin.status')}</th>
+                                                    <th className="px-6 py-4 text-right">{t('admin.actions')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-100">
@@ -364,13 +366,13 @@ const Admin = () => {
                                                     <tr>
                                                         <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                                                             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#68a49c] mx-auto mb-4"></div>
-                                                            Lade Produkte...
+                                                            {t('admin.loadingProducts')}
                                                         </td>
                                                     </tr>
                                                 ) : displayedProducts.length === 0 ? (
                                                     <tr>
                                                         <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                                                            Keine Produkte in der ausgewählten Kategorie gefunden.
+                                                            {t('admin.noProductsInCategory')}
                                                         </td>
                                                     </tr>
                                                 ) : (
@@ -398,7 +400,7 @@ const Admin = () => {
                                                                                 value={editForm.subcategoryId ?? ''}
                                                                                 onChange={(e) => setEditForm({...editForm, subcategoryId: parseInt(e.target.value)})}
                                                                             >
-                                                                                <option value="" disabled>Bitte wählen...</option>
+                                                                                <option value="" disabled>{t('admin.pleaseSelect')}</option>
                                                                                 {categories.map((c) => (
                                                                                     <optgroup key={c.categoryId} label={categoryLabel(c)}>
                                                                                         {c.subcategories.map((s) => (
@@ -411,7 +413,7 @@ const Admin = () => {
                                                                     ) : (
                                                                         <div>
                                                                             <div className="text-sm font-bold text-gray-900">{product.name}</div>
-                                                                            <div className="text-xs text-gray-500 mt-1">{subcategory ? categoryLabel(subcategory) : 'Unbekannt'}</div>
+                                                                            <div className="text-xs text-gray-500 mt-1">{subcategory ? categoryLabel(subcategory) : t('admin.unknown')}</div>
                                                                         </div>
                                                                     )}
                                                                 </td>
@@ -462,7 +464,7 @@ const Admin = () => {
                                                                         </label>
                                                                     ) : (
                                                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.isVisible ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                                                            {product.isVisible ? 'Aktiv' : 'Inaktiv'}
+                                                                            {product.isVisible ? t('admin.active') : t('admin.inactive')}
                                                                         </span>
                                                                     )}
                                                                 </td>
@@ -473,14 +475,14 @@ const Admin = () => {
                                                                             <button
                                                                                 onClick={() => handleSave(product.productId)}
                                                                                 className="text-white bg-[#68a49c] hover:bg-[#528a83] p-1.5 rounded"
-                                                                                title="Speichern"
+                                                                                title={t('admin.save')}
                                                                             >
                                                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                                                                             </button>
                                                                             <button
                                                                                 onClick={handleCancelEdit}
                                                                                 className="text-gray-600 bg-gray-100 hover:bg-gray-200 p-1.5 rounded"
-                                                                                title="Abbrechen"
+                                                                                title={t('admin.cancel')}
                                                                             >
                                                                                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                                                             </button>
@@ -492,14 +494,14 @@ const Admin = () => {
                                                                                 className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1"
                                                                             >
                                                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                                                                                Bearbeiten
+                                                                                {t('admin.edit')}
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleDelete(product.productId)}
                                                                                 className="text-red-600 hover:text-red-900 flex items-center gap-1"
                                                                             >
                                                                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                                                                                Löschen
+                                                                                {t('admin.delete')}
                                                                             </button>
                                                                         </div>
                                                                     )}
@@ -520,10 +522,10 @@ const Admin = () => {
                                 <svg className="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                                 </svg>
-                                <h3 className="text-lg font-medium text-gray-900 mb-1">Kategorien Verwalten</h3>
-                                <p className="mb-4">Die Kategorie-Verwaltung befindet sich in Entwicklung.</p>
+                                <h3 className="text-lg font-medium text-gray-900 mb-1">{t('admin.manageCategories')}</h3>
+                                <p className="mb-4">{t('admin.categoriesInDevelopment')}</p>
                                 <button className="mx-auto bg-[#2a3731] hover:bg-[#1f2924] text-white px-4 py-2 rounded shadow-sm text-sm font-medium transition-transform active:scale-95">
-                                    Neue Kategorie anlegen
+                                    {t('admin.newCategory')}
                                 </button>
                             </div>
                         )}

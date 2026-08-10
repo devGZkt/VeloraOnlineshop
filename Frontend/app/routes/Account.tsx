@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
 import Nav from "../components/Nav";
 import { useAuth } from "../context/AuthContext";
@@ -24,6 +25,7 @@ interface Order {
 }
 
 const Account = () => {
+  const { t, i18n } = useTranslation();
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -40,7 +42,7 @@ const Account = () => {
     axios
       .get("/api/Orders/my", { withCredentials: true })
       .then((res) => setOrders(res.data))
-      .catch(() => setError("Bestellungen konnten nicht geladen werden."));
+      .catch(() => setError(t('account.loadError')));
   }, [isLoading, user]);
 
   if (isLoading || !user) {
@@ -55,9 +57,9 @@ const Account = () => {
     <div className="min-h-screen bg-[#f2f4f3] font-sans">
       <Nav />
       <div className="max-w-5xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-serif text-[#3e564c] mb-2">Mein Konto</h1>
+        <h1 className="text-4xl font-serif text-[#3e564c] mb-2">{t('account.title')}</h1>
         <p className="text-[#8c9490] mb-10">
-          Willkommen zurück, {user.firstName}. Hier findest du deine bisherigen Bestellungen.
+          {t('account.welcome', { name: user.firstName })}
         </p>
 
         {error && (
@@ -68,17 +70,17 @@ const Account = () => {
 
         {orders === null && !error ? (
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-[#e2e8e4] text-[#8c9490]">
-            Bestellungen werden geladen...
+            {t('account.loadingOrders')}
           </div>
         ) : orders && orders.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl shadow-sm border border-[#e2e8e4]">
-            <h2 className="text-2xl font-medium text-[#2a3731] mb-2">Noch keine Bestellungen</h2>
-            <p className="text-[#8c9490] mb-8">Du hast bisher noch keine Bestellung aufgegeben.</p>
+            <h2 className="text-2xl font-medium text-[#2a3731] mb-2">{t('account.noOrders')}</h2>
+            <p className="text-[#8c9490] mb-8">{t('account.noOrdersText')}</p>
             <Link
               to="/products"
               className="inline-block bg-[#68a49c] text-white px-8 py-3 rounded hover:bg-[#4a857d] transition duration-300 font-medium tracking-wide uppercase text-sm"
             >
-              Produkte ansehen
+              {t('account.viewProducts')}
             </Link>
           </div>
         ) : (
@@ -90,9 +92,9 @@ const Account = () => {
               >
                 <div className="flex flex-wrap justify-between items-start gap-4 mb-6 pb-6 border-b border-[#e2e8e4]">
                   <div>
-                    <p className="text-sm text-[#8c9490]">Bestellung #{order.orderId}</p>
+                    <p className="text-sm text-[#8c9490]">{t('account.orderNumber', { id: order.orderId })}</p>
                     <p className="text-lg font-medium text-[#2a3731]">
-                      {new Date(order.orderDate).toLocaleDateString("de-CH", {
+                      {new Date(order.orderDate).toLocaleDateString(i18n.language === 'de' ? "de-CH" : "en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -100,7 +102,7 @@ const Account = () => {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-[#8c9490]">Gesamtsumme</p>
+                    <p className="text-sm text-[#8c9490]">{t('account.total')}</p>
                     <p className="text-lg font-semibold text-[#2a3731]">€{order.total.toFixed(2)}</p>
                   </div>
                 </div>
@@ -120,7 +122,7 @@ const Account = () => {
                 </ul>
 
                 <p className="text-xs text-[#8c9490] mt-4">
-                  Lieferadresse: {order.street} {order.houseNr}, {order.zipCode} {order.city}
+                  {t('account.shippingAddress', { street: order.street, houseNr: order.houseNr, zipCode: order.zipCode, city: order.city })}
                 </p>
               </div>
             ))}
