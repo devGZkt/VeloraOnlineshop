@@ -19,6 +19,9 @@ export default [
     route("signin", "routes/SignIn.tsx"),
     route("signup", "routes/SignUp.tsx"),
 
+    //Account / Orders Page
+    route("account", "routes/Account.tsx"),
+
     //Admin Page
     route("admin", "routes/Admin.tsx"),
 ] satisfies RouteConfig;

@@ -1,14 +1,35 @@
-import { useState } from "react";
-import { useLocation, Link } from "react-router";
+import { useState, useRef, useEffect } from "react";
+import { useLocation, useNavigate, Link } from "react-router";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 const Nav = () => {
 
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileProductsOpen, setIsMobileProductsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const { cart } = useCart();
+  const { user, logout } = useAuth();
   const totalItemCount = cart?.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0) || 0;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    setIsUserMenuOpen(false);
+    await logout();
+    navigate("/");
+  };
 
   const productCategories = [
     { name: 'Parfüm & Düfte', href: '/products?category=parfuem-duefte' },
@@ -92,11 +113,65 @@ const Nav = () => {
 
           {/* Right Icons (Desktop) */}
           <div className="hidden md:flex items-center space-x-6 text-[#2a3731]">
-            <button aria-label="User Account">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-              </svg>
-            </button>
+            <div className="relative" ref={userMenuRef}>
+              <button
+                onClick={() => setIsUserMenuOpen((prev) => !prev)}
+                aria-label="User Account"
+                aria-expanded={isUserMenuOpen}
+                className="flex items-center gap-1 hover:text-[#68a49c] transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <svg className={`w-4 h-4 transition-transform duration-300 ${isUserMenuOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+
+              {/* User Dropdown Panel */}
+              <div className={`absolute right-0 top-full pt-4 w-56 transform origin-top-right z-50 transition-all duration-200 ${isUserMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
+                <div className="bg-white shadow-xl rounded-xl border border-[#e2e8e4] overflow-hidden flex flex-col py-2">
+                  {user ? (
+                    <>
+                      <div className="px-5 py-2.5 border-b border-[#e2e8e4]">
+                        <p className="text-sm font-semibold text-[#2a3731] truncate">{user.firstName} {user.lastName}</p>
+                        <p className="text-xs text-[#8c9490] truncate">{user.email}</p>
+                      </div>
+                      <Link
+                        to="/account"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
+                      >
+                        My Orders
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="text-left px-5 py-2.5 text-sm font-medium text-[#c85a5a] hover:bg-[#f2f4f3] transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/signin"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
+                      >
+                        Sign In
+                      </Link>
+                      <Link
+                        to="/signup"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="px-5 py-2.5 text-sm font-medium text-[#333e38] hover:bg-[#f2f4f3] hover:text-[#2a3731] transition-colors"
+                      >
+                        Sign Up
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="relative group/cart py-2 flex items-center">
               <Link to="/checkout" aria-label="Shopping Cart" className="relative block transition-transform group-hover/cart:scale-110">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -236,11 +311,27 @@ const Nav = () => {
 
           {/* Mobile Icons */}
           <div className="flex items-center space-x-6 pt-4 mt-2 border-t border-[#e2e8e4] text-[#2a3731]">
-            <a href="/signin" aria-label="User Account" className="hover:text-[#68a49c] transition-colors duration-200">
+            <Link
+              to={user ? "/account" : "/signin"}
+              onClick={() => setIsOpen(false)}
+              aria-label="User Account"
+              className="hover:text-[#68a49c] transition-colors duration-200"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
               </svg>
-            </a>
+            </Link>
+            {user && (
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
+                className="text-sm font-medium text-[#c85a5a] hover:text-red-700 transition-colors"
+              >
+                Logout
+              </button>
+            )}
             <Link to="/checkout" aria-label="Shopping Cart" className="relative group">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 transition-transform group-hover:scale-110">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.119-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />

@@ -42,12 +42,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 import { CartProvider } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
-    <CartProvider>
-      <Outlet />
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <Outlet />
+      </CartProvider>
+    </AuthProvider>
   );
 }
 

@@ -1,6 +1,43 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import axios from "axios";
 import Nav from "../components/Nav";
+import { useAuth } from "../context/AuthContext";
 
 const SignIn = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { login } = useAuth();
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+        setIsSubmitting(true);
+
+        try {
+            const res = await axios.post(
+                "/api/User/login",
+                { email, pw: password },
+                { withCredentials: true }
+            );
+            login({
+                userId: res.data.userId,
+                firstName: res.data.firstName,
+                lastName: res.data.lastName,
+                email: res.data.email,
+            });
+            navigate("/");
+        } catch (err: any) {
+            const msg = err.response?.data?.message || err.response?.data || "Anmeldung fehlgeschlagen.";
+            setError(typeof msg === "string" ? msg : "Anmeldung fehlgeschlagen.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#f2f4f3] font-sans flex flex-col">
             <Nav />
@@ -11,17 +48,25 @@ const SignIn = () => {
                         <p className="text-[#8c9490]">Enter your credentials to access your account</p>
                     </div>
 
-                    <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+                    {error && (
+                        <div className="mb-6 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm text-center">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label className="block text-sm font-medium text-[#3e564c] mb-1.5 ml-1" htmlFor="email">
                                 Email Address
                             </label>
-                            <input 
+                            <input
                                 id="email"
-                                type="email" 
-                                required 
-                                className="w-full border-[#e2e8e4] rounded-xl shadow-sm focus:ring-2 focus:ring-[#68a49c] focus:border-transparent px-4 py-3 border outline-none transition-all duration-200 bg-[#fbfcfb]" 
-                                placeholder="you@example.com" 
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full bg-[#fbfcfb] text-[#2a3731] border-[#e2e8e4] rounded-xl shadow-sm focus:ring-2 focus:ring-[#68a49c] focus:border-transparent px-4 py-3 border outline-none transition-all duration-200"
+                                placeholder="you@example.com"
                             />
                         </div>
 
@@ -32,12 +77,14 @@ const SignIn = () => {
                                 </label>
                                 <a href="#" className="text-xs text-[#68a49c] hover:text-[#3e564c] transition-colors">Forgot Password?</a>
                             </div>
-                            <input 
+                            <input
                                 id="password"
-                                type="password" 
-                                required 
-                                className="w-full border-[#e2e8e4] rounded-xl shadow-sm focus:ring-2 focus:ring-[#68a49c] focus:border-transparent px-4 py-3 border outline-none transition-all duration-200 bg-[#fbfcfb]" 
-                                placeholder="••••••••" 
+                                type="password"
+                                required
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-[#fbfcfb] text-[#2a3731] border-[#e2e8e4] rounded-xl shadow-sm focus:ring-2 focus:ring-[#68a49c] focus:border-transparent px-4 py-3 border outline-none transition-all duration-200"
+                                placeholder="••••••••"
                             />
                         </div>
 
@@ -58,11 +105,12 @@ const SignIn = () => {
                             </div>
                         </div>
 
-                        <button 
+                        <button
                             type="submit"
-                            className="w-full bg-[#3e564c] text-white py-3.5 rounded-xl hover:bg-[#2a3731] transform active:scale-[0.98] transition-all duration-200 font-medium tracking-wide uppercase text-sm shadow-md"
+                            disabled={isSubmitting}
+                            className="w-full bg-[#3e564c] text-white py-3.5 rounded-xl hover:bg-[#2a3731] disabled:opacity-50 transform active:scale-[0.98] transition-all duration-200 font-medium tracking-wide uppercase text-sm shadow-md"
                         >
-                            Sign In
+                            {isSubmitting ? "Signing in..." : "Sign In"}
                         </button>
                     </form>
 
