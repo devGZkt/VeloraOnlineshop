@@ -18,7 +18,8 @@
 			public DbSet<OrderDetail> OrderDetails { get; set; }
 			public DbSet<Product> Products { get; set; }
 			public DbSet<User> Users { get; set; }
-			
+			public DbSet<ContactMessage> ContactMessages { get; set; }
+
 
 
 			//FluentAPI integration for maxLenght, not null/rs required and relations between Table
@@ -137,6 +138,16 @@
 
 					entity.HasIndex(e => e.Email).IsUnique();
 				});
-			}	
+
+				// ContactMessage
+				modelBuilder.Entity<ContactMessage>(entity =>
+				{
+					entity.HasKey(e => e.Id);
+
+					entity.Property(e => e.Name).HasMaxLength(50).IsRequired();
+					entity.Property(e => e.Email).HasMaxLength(60).IsRequired();
+					entity.Property(e => e.Message).HasMaxLength(450).IsRequired();
+				});
+			}
 		}
 	}
