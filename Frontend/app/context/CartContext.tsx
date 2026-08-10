@@ -21,25 +21,30 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-    const [cart, setCart] = useState<CartItem[]>(() => {
-        if (typeof window !== "undefined") {
-            const storedCart = localStorage.getItem("velora-cart");
-            if (storedCart) {
-                try {
-                    return JSON.parse(storedCart);
-                } catch (e) {
-                    console.error("Failed to parse stored cart", e);
-                }
-            }
-        }
-        return [];
-    });
+    // Starts empty on both server and the client's first render so hydration
+    // always matches; the real cart is loaded from localStorage right after
+    // mount instead of during the initial render (which previously produced
+    // a client-only cart badge and a hydration mismatch).
+    const [cart, setCart] = useState<CartItem[]>([]);
+    const [isHydrated, setIsHydrated] = useState(false);
 
     useEffect(() => {
-        if (typeof window !== "undefined") {
+        const storedCart = localStorage.getItem("velora-cart");
+        if (storedCart) {
+            try {
+                setCart(JSON.parse(storedCart));
+            } catch (e) {
+                console.error("Failed to parse stored cart", e);
+            }
+        }
+        setIsHydrated(true);
+    }, []);
+
+    useEffect(() => {
+        if (isHydrated) {
             localStorage.setItem("velora-cart", JSON.stringify(cart));
         }
-    }, [cart]);
+    }, [cart, isHydrated]);
 
     const addToCart = (product: any) => {
         const id = product.id ?? product.productId;
