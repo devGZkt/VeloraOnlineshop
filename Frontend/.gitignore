@@ -5,3 +5,6 @@
 # React Router
 /.react-router/
 /build/
+
+# Vite dependency pre-bundling cache
+/.vite/
