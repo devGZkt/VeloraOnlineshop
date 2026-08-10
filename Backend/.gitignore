@@ -11,3 +11,6 @@ obj/
 
 # Packages
 packages/
+
+# Local SQLite database
+velora.db
