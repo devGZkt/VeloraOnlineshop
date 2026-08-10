@@ -51,6 +51,7 @@ namespace Backend.Services
             };
 
             //Takes secret-key and transforms it into a byte-array
+            //Must match the IssuerSigningKey configured in Program.cs, otherwise token validation always fails
             var secretKey = "cOPI!?Bm2j}A+-g,6W:y_$Gv4pp*|Pnr"; //SecretKey only for dev hardcoded
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
 

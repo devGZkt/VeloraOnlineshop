@@ -53,7 +53,7 @@ builder
         {
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes("this_is_my_secrete_keyyyyy")
+                Encoding.UTF8.GetBytes("cOPI!?Bm2j}A+-g,6W:y_$Gv4pp*|Pnr")
             ),
             ValidateIssuer = true,
             ValidIssuer = appName,

@@ -1,6 +1,8 @@
-﻿using Backend.Models.DTOs;
+﻿using System.Security.Claims;
+using Backend.Models.DTOs;
 using Backend.Models.Entities;
 using Backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -85,7 +87,7 @@ namespace Backend.Controller
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true, //sends via HTTPS
+                Secure = Request.IsHttps, //only require HTTPS when actually served over HTTPS (dev runs on plain HTTP)
                 SameSite = SameSiteMode.Strict, //Only stores if request comes from valid domain
                 Expires = DateTime.UtcNow.AddHours(4),
             };
@@ -93,8 +95,59 @@ namespace Backend.Controller
             //Token gets added as header for browser
             Response.Cookies.Append("jwt_token", result, cookieOptions);
 
+            var loggedInUser = await _db.Users.SingleAsync(u => u.Email == username);
+
             //returns response ok (200) with token in header
-            return Ok(new { message = "Login sucessfull" });
+            return Ok(
+                new
+                {
+                    message = "Login sucessfull",
+                    userId = loggedInUser.UserId,
+                    firstName = loggedInUser.FirstName,
+                    lastName = loggedInUser.LastName,
+                    email = loggedInUser.Email,
+                }
+            );
+        }
+
+        // Clears the auth cookie
+        [Authorize]
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwt_token");
+            return Ok(new { message = "Logout successful" });
+        }
+
+        // Returns the currently authenticated user's info
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var idClaim =
+                User.FindFirst(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub)
+                ?? User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (idClaim == null || !int.TryParse(idClaim.Value, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.UserId == userId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(
+                new
+                {
+                    userId = user.UserId,
+                    firstName = user.FirstName,
+                    lastName = user.LastName,
+                    email = user.Email,
+                }
+            );
         }
     }
 }
