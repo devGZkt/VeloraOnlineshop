@@ -13,4 +13,4 @@ obj/
 packages/
 
 # Local SQLite database
-velora.db
+velora.db*
