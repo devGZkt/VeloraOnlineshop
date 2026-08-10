@@ -41,7 +41,7 @@ namespace Backend.Services
         {
 
             //Create Claims (first part of token)
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserId.ToString()),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.FirstName),
@@ -49,6 +49,11 @@ namespace Backend.Services
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
+
+            if (user.IsAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, "Admin"));
+            }
 
             //Takes secret-key and transforms it into a byte-array
             //Must match the IssuerSigningKey configured in Program.cs, otherwise token validation always fails

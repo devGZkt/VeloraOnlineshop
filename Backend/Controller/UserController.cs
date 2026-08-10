@@ -52,6 +52,7 @@ namespace Backend.Controller
                 DateOfBirth = registerDto.DateOfBrith,
                 CreatedAt = DateTime.UtcNow,
                 EmailVerified = false,
+                IsAdmin = false,
             };
 
             //Creates new record for user in db, saves it and returns 201
@@ -106,6 +107,7 @@ namespace Backend.Controller
                     firstName = loggedInUser.FirstName,
                     lastName = loggedInUser.LastName,
                     email = loggedInUser.Email,
+                    isAdmin = loggedInUser.IsAdmin,
                 }
             );
         }
@@ -146,6 +148,7 @@ namespace Backend.Controller
                     firstName = user.FirstName,
                     lastName = user.LastName,
                     email = user.Email,
+                    isAdmin = user.IsAdmin,
                 }
             );
         }

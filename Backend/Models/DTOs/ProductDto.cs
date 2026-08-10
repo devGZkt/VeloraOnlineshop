@@ -1,0 +1,15 @@
+namespace Backend.Models.DTOs
+{
+    public class ProductDto
+    {
+        public required int SubcategoryId { get; set; }
+        public required string Name { get; set; }
+        public string? Sku { get; set; }
+        public string? Slug { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? LongDescription { get; set; }
+        public decimal Price { get; set; }
+        public bool IsVisible { get; set; }
+        public int DisplayOrder { get; set; }
+    }
+}

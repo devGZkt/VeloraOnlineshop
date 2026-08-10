@@ -135,6 +135,7 @@
 					entity.Property(e => e.Email).HasMaxLength(50).IsRequired();
 					entity.Property(e => e.PwHashed).HasMaxLength(255).IsRequired();
 					entity.Property(e => e.CreatedAt).IsRequired();
+					entity.Property(e => e.IsAdmin).IsRequired().HasDefaultValue(false);
 
 					entity.HasIndex(e => e.Email).IsUnique();
 				});

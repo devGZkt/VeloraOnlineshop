@@ -28,5 +28,7 @@ namespace Backend.Models.Entities
 
         public DateTime? PwChangedAt { get; set; }
 
+        public bool IsAdmin { get; set; }
+
     }
 }
